@@ -7,16 +7,20 @@ public class CameraArm : MonoBehaviour {
     public float FocusRadius = 5;
     [Space]
     public float Height = 10;
-
+    public float VelocityOffset = 0.25f;
     public float DistanceDamping = 2;
     public float AngleDamping = 3;
 
-    void FixedUpdate() {
-        var targetPosition = GetTargetPosition();
+    void Start() {
+        this.transform.position = GetTargetPosition();
+    }
 
+    void FixedUpdate() {
+
+        //Maybe try Damp instead of Lerp for better results??
         this.transform.position = Vector3.Lerp(
             this.transform.position,
-            targetPosition + Vector3.up * Height,
+            GetTargetPosition(),
             Time.fixedDeltaTime * DistanceDamping
             );
         //this.transform.rotation = Quaternion.Slerp(
@@ -26,7 +30,7 @@ public class CameraArm : MonoBehaviour {
         //    );
     }
 
-    private Vector3 GetTargetPosition() {
+    private Vector3 GetFocusPosition() {
         var offset = Vector3.zero;
         var count = 0;
         foreach (var point in CameraFocusPoint.CameraFocusPoints) {
@@ -43,5 +47,9 @@ public class CameraArm : MonoBehaviour {
         else {
             return PlayerController.LocalPlayer.transform.position;
         }
+    }
+
+    private Vector3 GetTargetPosition() {
+        return GetFocusPosition() + Vector3.up * (Height + PlayerController.LocalPlayer.Velocity.magnitude * VelocityOffset);
     }
 }

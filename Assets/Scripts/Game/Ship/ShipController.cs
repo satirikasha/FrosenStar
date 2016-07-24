@@ -5,13 +5,20 @@ public class ShipController : MonoBehaviour {
 
     private const float BodyRollCoeff = 0.5f;
 
-    private Rigidbody _Rigidbody;
+    public Vector3 Velocity {
+        get
+        {
+            return _Rigidbody.velocity;
+        }
+    }
 
     public float EngineForce = 750;
     public float TurnTorque = 150;
     public float StabilizationTorque = 25;
     public float StabilizationScaleLon = 1;
     public float StabilizationScaleLat = 5;
+
+    private Rigidbody _Rigidbody;
 
     void Awake() {
         _Rigidbody = this.GetComponent<Rigidbody>();
