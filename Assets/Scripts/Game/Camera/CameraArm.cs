@@ -16,18 +16,12 @@ public class CameraArm : MonoBehaviour {
     }
 
     void FixedUpdate() {
-
-        //Maybe try Damp instead of Lerp for better results??
+        Debug.DrawLine(PlayerController.LocalPlayer.transform.position, GetFocusPosition());
         this.transform.position = Vector3.Lerp(
             this.transform.position,
             GetTargetPosition(),
             Time.fixedDeltaTime * DistanceDamping
             );
-        //this.transform.rotation = Quaternion.Slerp(
-        //    this.transform.rotation, 
-        //    Quaternion.LookRotation(targetPosition - this.transform.position, Vector3.forward),
-        //    Time.fixedDeltaTime * AngleDamping
-        //    );
     }
 
     private Vector3 GetFocusPosition() {
@@ -35,13 +29,14 @@ public class CameraArm : MonoBehaviour {
         var count = 0;
         foreach (var point in CameraFocusPoint.CameraFocusPoints) {
             var currentOffset = point.transform.position - PlayerController.LocalPlayer.transform.position;
-            if (currentOffset.sqrMagnitude > 0 && currentOffset.sqrMagnitude < FocusRadius * FocusRadius) {
-                offset += currentOffset * (1 - currentOffset.magnitude / FocusRadius);
+            var offsetMagnitude = currentOffset.magnitude;
+            if (point.transform != PlayerController.LocalPlayer.transform && offsetMagnitude < FocusRadius) {
+                var distanceMult = 1 - currentOffset.magnitude / FocusRadius;
+                offset += currentOffset * distanceMult * distanceMult * point.Weight;
                 count++;
             }
         }
         if (count > 0) {
-            offset /= count;
             return offset + PlayerController.LocalPlayer.transform.position;
         }
         else {

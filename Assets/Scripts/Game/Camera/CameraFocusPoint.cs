@@ -12,6 +12,9 @@ public class CameraFocusPoint : MonoBehaviour {
     }
     private static List<CameraFocusPoint> _CameraFocusPoints = new List<CameraFocusPoint>();
 
+    [Range(0,1)]
+    public float Weight = 0.25f;
+
     void OnEnable() {
         _CameraFocusPoints.Add(this);
     }
