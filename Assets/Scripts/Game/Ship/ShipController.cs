@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 
 public class ShipController : MonoBehaviour {
 
@@ -18,16 +20,23 @@ public class ShipController : MonoBehaviour {
     public float StabilizationScaleLon = 1;
     public float StabilizationScaleLat = 5;
 
+    public List<ItemSlot> ItemSlots { get; private set; }
+
     private Rigidbody _Rigidbody;
 
     void Awake() {
         _Rigidbody = this.GetComponent<Rigidbody>();
+        ItemSlots = this.GetComponentsInChildren<ItemSlot>().ToList();
     }
 
     void FixedUpdate() {
         UpdateEngineForce();
         UpdateRotationTorque();
         UpdateStabilizationTorque();
+    }
+
+    void Update() {
+        UpdateFire();
     }
 
     private void UpdateEngineForce() {
@@ -50,5 +59,20 @@ public class ShipController : MonoBehaviour {
         var lonStabilization = -lonOffset * StabilizationTorque * StabilizationScaleLon * this.transform.forward;
         var latStabilization = -latOffset * StabilizationTorque * StabilizationScaleLat * this.transform.right;
         _Rigidbody.AddTorque(lonStabilization + latStabilization);
+    }
+
+    private void UpdateFire() {
+        if (Input.GetButtonDown("Fire")) {
+            Debug.Log("Down");
+            foreach(var weapon in ItemSlots.Select(_ => _.Item).OfType<Weapon>()) {
+                weapon.StartFire();
+            }
+        }
+        if (Input.GetButtonUp("Fire")) {
+            Debug.Log("Up");
+            foreach (var weapon in ItemSlots.Select(_ => _.Item).OfType<Weapon>()) {
+                weapon.StopFire();
+            }
+        }
     }
 }
