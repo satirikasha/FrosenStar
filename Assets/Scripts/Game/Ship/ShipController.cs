@@ -21,12 +21,17 @@ public class ShipController : MonoBehaviour {
     public float StabilizationScaleLat = 5;
 
     public List<ItemSlot> ItemSlots { get; private set; }
+    public List<Weapon> Weapons{ get; private set; }
+    public List<Engine> Engines { get; private set; }
 
     private Rigidbody _Rigidbody;
 
     void Awake() {
-        _Rigidbody = this.GetComponent<Rigidbody>();
-        ItemSlots = this.GetComponentsInChildren<ItemSlot>().ToList();
+        _Rigidbody = this.GetComponent<Rigidbody>();        
+    }
+
+    void Start() {
+        RefreshSlots();
     }
 
     void FixedUpdate() {
@@ -63,16 +68,16 @@ public class ShipController : MonoBehaviour {
 
     private void UpdateFire() {
         if (Input.GetButtonDown("Fire")) {
-            Debug.Log("Down");
-            foreach(var weapon in ItemSlots.Select(_ => _.Item).OfType<Weapon>()) {
-                weapon.StartFire();
-            }
+            Weapons.ForEach(_ => _.StartFire());
         }
         if (Input.GetButtonUp("Fire")) {
-            Debug.Log("Up");
-            foreach (var weapon in ItemSlots.Select(_ => _.Item).OfType<Weapon>()) {
-                weapon.StopFire();
-            }
+            Weapons.ForEach(_ => _.StopFire());
         }
+    }
+
+    public void RefreshSlots() {
+        ItemSlots = this.GetComponentsInChildren<ItemSlot>().ToList();
+        Weapons = ItemSlots.Select(_ => _.Item).OfType<Weapon>().ToList();
+        Engines = ItemSlots.Select(_ => _.Item).OfType<Engine>().ToList();
     }
 }
