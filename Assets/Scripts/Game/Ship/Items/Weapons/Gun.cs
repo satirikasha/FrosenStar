@@ -11,5 +11,6 @@ public class Gun : Weapon {
         var projectile = Instantiate<Projectile>(Projectile);
         projectile.transform.position = FirePivot.transform.position;
         projectile.transform.rotation = FirePivot.transform.rotation;
+        projectile.InheritedSpeed = Vector3.Dot(Ship.Velocity, FirePivot.forward);
     }
 }

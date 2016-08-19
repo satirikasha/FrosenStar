@@ -35,18 +35,18 @@ public class ShipController : MonoBehaviour {
     }
 
     void FixedUpdate() {
-        UpdateEngineForce();
+        UpdateEngines();
         UpdateRotationTorque();
         UpdateStabilizationTorque();
     }
 
     void Update() {
-        UpdateFire();
+        UpdateWeapons();
     }
 
-    private void UpdateEngineForce() {
+    private void UpdateEngines() {
         var vertical = Input.GetAxis("Vertical");
-        _Rigidbody.AddForce(this.transform.forward * vertical * EngineForce);
+        Engines.ForEach(_ => _.ApplyThrust(_Rigidbody, vertical));
     }
 
     private void UpdateRotationTorque() {
@@ -66,7 +66,7 @@ public class ShipController : MonoBehaviour {
         _Rigidbody.AddTorque(lonStabilization + latStabilization);
     }
 
-    private void UpdateFire() {
+    private void UpdateWeapons() {
         if (Input.GetButtonDown("Fire")) {
             Weapons.ForEach(_ => _.StartFire());
         }
