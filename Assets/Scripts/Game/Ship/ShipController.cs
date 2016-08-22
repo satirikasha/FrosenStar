@@ -14,9 +14,8 @@ public class ShipController : MonoBehaviour {
         }
     }
 
-    public float EngineForce = 750;
     public float TurnTorque = 150;
-    public float StabilizationTorque = 25;
+    public float StabilizationTorque = 2.5f;
     public float StabilizationScaleLon = 1;
     public float StabilizationScaleLat = 5;
 
