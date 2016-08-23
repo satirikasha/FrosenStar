@@ -3,7 +3,7 @@ using System.Collections;
 
 public class ShipViewCamera : MonoBehaviour {
 
-
+    public Transform FocusPoint;
 
 	// Use this for initialization
 	void Start () {

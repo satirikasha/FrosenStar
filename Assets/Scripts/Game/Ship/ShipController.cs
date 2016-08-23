@@ -40,7 +40,8 @@ public class ShipController : MonoBehaviour {
     }
 
     void Update() {
-        UpdateWeapons();
+        if (!GameManager.Instance.Paused)
+            UpdateWeapons();
     }
 
     private void UpdateEngines() {

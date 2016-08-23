@@ -2,28 +2,34 @@
 using System.Collections;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
-public class UIManager : MonoBehaviour {
-
-    private static UIManager Instance;
+public class UIManager : SingletonBehaviour<UIManager> {
 
     public float TransitionTime = 1.25f;
 
     public CanvasGroup DefaultPanel;
     public List<CanvasGroup> Panels;
 
-    public CanvasGroup CurrentPanel { get; private set; }
-    
+    public static CanvasGroup CurrentPanel {
+        get {
+            return Instance._CurrentPanel;
+        }
+        private set {
+            Instance._CurrentPanel = value;
+        }
+    }
+    private CanvasGroup _CurrentPanel;
+
     // Use this for initialization
     void Start() {
-        Instance = this;
 
         Panels.ForEach(_ => SetPanelVisibility(_, false));
 
         SetPanelVisibility(DefaultPanel, true);
         CurrentPanel = DefaultPanel;
     }
-    
+
     private void SetPanelVisibility(CanvasGroup panel, bool value) {
         panel.gameObject.SetActive(value);
         panel.blocksRaycasts = value;
@@ -31,8 +37,13 @@ public class UIManager : MonoBehaviour {
         panel.GetComponent<RectTransform>().anchoredPosition = Vector2.zero;
     }
 
-    public void SetCurrentPanel(CanvasGroup newPanel, CanvasGroup requiredPanel = null, Action<float> customAction = null) {
-        StartCoroutine(SetCurrentPanelTask(newPanel, requiredPanel, customAction));
+    public static CanvasGroup GetPanel(string name) {
+        return Instance.Panels.First(_ => _.name == name);
+    }
+
+    public static void SetCurrentPanel(CanvasGroup newPanel, CanvasGroup requiredPanel = null, Action<float> customAction = null) {
+        if (CurrentPanel != newPanel && CurrentPanel != null)
+            Instance.StartCoroutine(Instance.SetCurrentPanelTask(newPanel, requiredPanel, customAction));
     }
 
     private IEnumerator SetCurrentPanelTask(CanvasGroup newPanel, CanvasGroup requiredPanel, Action<float> customAction) {
@@ -41,7 +52,7 @@ public class UIManager : MonoBehaviour {
 
         var oldPanel = CurrentPanel;
         CurrentPanel = null;
-        
+
 
         newPanel.gameObject.SetActive(true);
         newPanel.blocksRaycasts = false;
@@ -62,7 +73,7 @@ public class UIManager : MonoBehaviour {
             delay -= Time.unscaledDeltaTime;
             yield return null;
         }
-        
+
         SetPanelVisibility(newPanel, true);
         SetPanelVisibility(oldPanel, false);
         if (customAction != null)
