@@ -15,7 +15,6 @@ public class ShipViewCamera : MonoBehaviour {
 
     void Update() {
         if (TargetImage != null) {
-            //_Camera.enabled = TargetImage.gameObject.activeInHierarchy;
             if (_Camera.pixelWidth != (int)TargetImage.rectTransform.rect.width || _Camera.pixelHeight != (int)TargetImage.rectTransform.rect.height) {
                 var oldRT = _Camera.targetTexture;
                 _Camera.targetTexture = RenderTexture.GetTemporary((int)TargetImage.rectTransform.rect.width, (int)TargetImage.rectTransform.rect.height, 16);
