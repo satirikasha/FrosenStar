@@ -40,7 +40,6 @@ public class ShipController : MonoBehaviour {
     }
 
     void Update() {
-        if (!GameManager.Instance.Paused)
             UpdateWeapons();
     }
 
@@ -67,7 +66,7 @@ public class ShipController : MonoBehaviour {
     }
 
     private void UpdateWeapons() {
-        if (Input.GetButtonDown("Fire")) {
+        if (Input.GetButtonDown("Fire") && !GameManager.Instance.Paused) {
             Weapons.ForEach(_ => _.StartFire());
         }
         if (Input.GetButtonUp("Fire")) {
