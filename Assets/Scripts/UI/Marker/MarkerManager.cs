@@ -3,21 +3,21 @@ using System.Collections;
 using System.Linq;
 using System.Collections.Generic;
 
-namespace Heist.UI {
+namespace UI.Markers {
 
-    public class MarkerManager : MonoBehaviour {
+    public class MarkerManager : SingletonBehaviour<MarkerManager> {
 
-        public float MarkerRadius = 3;
-        //private Dictionary<IMarkerProvider, MarkerWidgetBase> _Markers;
+        private List<MarkerWidget> _Markers;
+        //private Dictionary<MarkerProvider, MarkerWidget> _Markers;
 
         //void Start() {
-        //    _Markers = new Dictionary<IMarkerProvider, MarkerWidgetBase>();
+        //    _Markers = new Dictionary<MarkerProvider, MarkerWidget>();
 
-        //    var playerPos = Vector3.zero; // CharacterController.LocalPlayer.RaycastTarget.position;
+        //    var playerPos = PlayerController.LocalPlayer.Position;
 
-        //    List<IMarkerProvider> providers = new List<IMarkerProvider>();
-        //    foreach (var Col in Physics.OverlapSphere(playerPos, 1000)) {//, LayerMask.GetMask("Interaction", "InteractionAntiSensor"))) {
-        //        providers.AddRange(Col.GetComponents<IMarkerProvider>());
+        //    List<MarkerProvider> providers = new List<MarkerProvider>();
+        //    foreach (var Col in Physics.OverlapSphere(playerPos, 1000)) {
+        //        providers.AddRange(Col.GetComponents<MarkerProvider>());
         //    }
 
         //    AddMarkers(providers);
@@ -35,7 +35,7 @@ namespace Heist.UI {
         //    }
         //}
 
-        //private void AddMarkers(List<IMarkerProvider> providers) {
+        //private void AddMarkers(List<MarkerProvider> providers) {
         //    foreach (var p in providers) {
         //        if (!_Markers.ContainsKey(p)) {
         //            //Debug.Log("Adding Marker for " + p);
@@ -45,9 +45,9 @@ namespace Heist.UI {
         //    }
         //}
 
-        //private MarkerWidgetBase InstantiateMarker(IMarkerProvider provider) {
-        //    var markerWidget = Instantiate(provider.GetMarkerWidget()).GetComponent<MarkerWidgetBase>();
-        //    markerWidget.OnProviderDestroyed += _ => _Markers.Remove(_.MarkerProvider);
+        //private MarkerWidget InstantiateMarker(MarkerProvider provider) {
+        //    var markerWidget = Instantiate(MarkerResourcesCache.GetMarker(provider.RequiredMarkerType));
+        //    //markerWidget.OnProviderDestroyed += _ => _Markers.Remove(_.MarkerProvider);
         //    markerWidget.transform.SetParent(this.transform);
         //    markerWidget.transform.localScale = Vector3.one;
         //    markerWidget.MarkerProvider = provider;

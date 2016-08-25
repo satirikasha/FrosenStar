@@ -10,12 +10,6 @@ public class GameManager : SingletonBehaviour<GameManager> {
         }
     }
 
-	// Use this for initialization
-	void Start () {
-        Debug.Log(UI.Markers.MarkerResourcesCache.GetMarker<UI.Markers.FocusMarkerWidget>());
-	}
-
-    // Update is called once per frame
     void Update () {
         UpdateInput();
 	}

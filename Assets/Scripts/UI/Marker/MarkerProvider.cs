@@ -1,20 +1,18 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
 
 namespace UI.Markers {
 
+    public abstract class MarkerProvider : MonoBehaviour {
 
-
-    public abstract class MarkerProvider<T> : MonoBehaviour where T : MarkerData {
-
-        public T Data { get; private set; }
-
-        void Update() {
-
-        }
-
-        public abstract void UpdateData();
+        public abstract Type RequiredMarkerType { get; }
+  
+        public abstract MarkerData GetMarkerData();
     }
 
-    public abstract class MarkerData { }
+    public class MarkerData {
+        public bool Visible;
+        public Vector3 WorldPosition;
+    }
 }

@@ -13,11 +13,19 @@ namespace UI.Markers {
 
         private static MarkerWidget[] Markers;
 
+        public static MarkerWidget GetMarker(Type type) {
+            PrepareMarkers();
+            return Markers.FirstOrDefault(_ => _.GetType() == type);
+        }
+
         public static T GetMarker<T>() where T : MarkerWidget {
+            PrepareMarkers();
+            return Markers.OfType<T>().FirstOrDefault();
+        }
+
+        private static void PrepareMarkers() {
             if (Markers == null)
                 Markers = Resources.LoadAll<MarkerWidget>(MarkerWidgetPath);
-
-            return Markers.OfType<T>().FirstOrDefault();
         }
     }
 }

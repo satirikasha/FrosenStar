@@ -8,14 +8,19 @@ public class PlayerController : MonoBehaviour {
     public ShipController Ship { get; private set; }
 
     public Vector3 Velocity {
-        get
-        {
+        get {
             return Ship.Velocity;
         }
     }
 
-	void Awake () {
+    public Vector3 Position {
+        get {
+            return this.transform.position;
+        }
+    }
+
+    void Awake() {
         LocalPlayer = this;
         Ship = this.GetComponent<ShipController>();
-	}
+    }
 }

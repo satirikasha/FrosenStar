@@ -5,37 +5,39 @@ using System;
 
 namespace UI.Markers {
 
+    public abstract class MarkerWidget : MonoBehaviour {
 
-    public abstract class MarkerWidget<T> : MonoBehaviour where T : MarkerData {
-
-        public event Action<MarkerWidget> OnProviderDestroyed;
+        //public event Action<MarkerWidget> OnProviderDestroyed;
 
         public MarkerProvider MarkerProvider;
 
-        public bool Visible { get; private set; }
+        public bool Visible { get; protected set; }
 
         protected RectTransform RectTransform { get; private set; }
         private Animator _Animator;
 
         private Coroutine CurrentDisableCor;
 
-        // Use this for initialization
+        void Awake() {
+            RectTransform = (RectTransform)this.transform;
+        }
+
         public virtual void Init() {
             RectTransform = (RectTransform)this.transform;
             _Animator = this.GetComponent<Animator>();
-
             this.gameObject.SetActive(false);
             Visible = false;
         }
-
-        // Update is called once per frame
+        
         void LateUpdate() {
 
-            if (MarkerProvider == null || ((MonoBehaviour)MarkerProvider) == null) {
-                OnProviderDestroyed(this);
-                Destroy(this.gameObject);
-                return;
-            }
+            UpdateMarker(MarkerProvider.GetMarkerData());
+
+            //if (MarkerProvider == null || ((MonoBehaviour)MarkerProvider) == null) {
+            //    OnProviderDestroyed(this);
+            //    Destroy(this.gameObject);
+            //    return;
+            //}
 
             //if (!MarkerProvider.GetMarkerVisibility())
             //    Hide();
@@ -45,15 +47,25 @@ namespace UI.Markers {
             //SetMessage(MarkerProvider.GetMarkerMessage());
         }
 
+        public virtual void UpdateMarker(MarkerData data) {
+            if (data.Visible) {
+                Show();
+            }
+            else {
+                Hide();
+            }
+            RectTransform.localPosition = TransformPosition(data.WorldPosition);
+        }
+
         public void Show() {
-            //if (!Visible && MarkerProvider.GetMarkerVisibility()) {
-            //    Visible = true;
-            //    if (CurrentDisableCor != null)
-            //        StopCoroutine(CurrentDisableCor);
-            //    this.gameObject.SetActive(true);
-            //    if (_Animator)
-            //        _Animator.SetBool("Visible", true);
-            //}
+            if (!Visible) {
+                Visible = true;
+                if (CurrentDisableCor != null)
+                    StopCoroutine(CurrentDisableCor);
+                this.gameObject.SetActive(true);
+                if (_Animator)
+                    _Animator.SetBool("Visible", true);
+            }
         }
 
         public void Hide() {
@@ -67,7 +79,8 @@ namespace UI.Markers {
 
         private IEnumerator DisableOnAnimationFinished() {
             yield return null;
-            yield return new WaitForSeconds(_Animator.GetCurrentAnimatorStateInfo(0).length);
+            yield return new WaitUntil(() => _Animator.GetCurrentAnimatorStateInfo(0).normalizedTime == 1);
+            //yield return new WaitForSeconds(_Animator.GetCurrentAnimatorStateInfo(0).length);
             this.gameObject.SetActive(false);
         }
 
@@ -78,15 +91,5 @@ namespace UI.Markers {
                 UnityEngine.Camera.main.WorldToViewportPoint(position) - Vector3.one * 0.5f
                 );
         }
-
-        public virtual void SetPosition(Vector2 position) {
-            RectTransform.localPosition = new Vector3(position.x, position.y, 0);
-        }
-
-        public virtual void SetColor(Color color) { }
-
-        public virtual void SetType(int type) { }
-
-        public virtual void SetMessage(string message) { }
     }
 }
