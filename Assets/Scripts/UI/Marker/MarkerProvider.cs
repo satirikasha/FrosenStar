@@ -5,16 +5,16 @@ namespace UI.Markers {
 
 
 
-    public class MarkerProvider : MonoBehaviour {
+    public abstract class MarkerProvider<T> : MonoBehaviour where T : MarkerData {
 
-        // Use this for initialization
-        void Start() {
+        public T Data { get; private set; }
 
-        }
-
-        // Update is called once per frame
         void Update() {
 
         }
+
+        public abstract void UpdateData();
     }
+
+    public abstract class MarkerData { }
 }

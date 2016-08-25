@@ -6,7 +6,7 @@ using System;
 namespace UI.Markers {
 
 
-    public abstract class MarkerWidget : MonoBehaviour {
+    public abstract class MarkerWidget<T> : MonoBehaviour where T : MarkerData {
 
         public event Action<MarkerWidget> OnProviderDestroyed;
 
@@ -30,8 +30,8 @@ namespace UI.Markers {
 
         // Update is called once per frame
         void LateUpdate() {
-            
-            if(MarkerProvider == null || ((MonoBehaviour)MarkerProvider)==null) {
+
+            if (MarkerProvider == null || ((MonoBehaviour)MarkerProvider) == null) {
                 OnProviderDestroyed(this);
                 Destroy(this.gameObject);
                 return;
@@ -73,7 +73,7 @@ namespace UI.Markers {
 
         protected virtual Vector2 TransformPosition(Vector3 position) {
             return Vector3.Scale(
-                new Vector3(((RectTransform)RectTransform.parent).rect.width, 
+                new Vector3(((RectTransform)RectTransform.parent).rect.width,
                 ((RectTransform)RectTransform.parent).rect.height),
                 UnityEngine.Camera.main.WorldToViewportPoint(position) - Vector3.one * 0.5f
                 );
