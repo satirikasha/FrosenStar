@@ -15,6 +15,7 @@ namespace UI.Markers {
 
         public override MarkerData GetMarkerData() {
             var data = new FocusMarkerData();
+            data.Visible = true;
             data.WorldPosition = this.transform.position;
             data.FocusProgress = Mathf.Sin(Time.timeSinceLevelLoad);
             return data;
