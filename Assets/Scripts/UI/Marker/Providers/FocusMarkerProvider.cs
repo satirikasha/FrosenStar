@@ -7,6 +7,8 @@ namespace UI.Markers {
 
     public class FocusMarkerProvider : MarkerProvider {
 
+        public bool Viewed;
+
         public override Type RequiredMarkerType {
             get {
                 return typeof(FocusMarkerWidget);
@@ -15,10 +17,13 @@ namespace UI.Markers {
 
         public override MarkerData GetMarkerData() {
             var data = new FocusMarkerData();
-            data.Visible = true;
             data.WorldPosition = this.transform.position;
             data.FocusProgress = Mathf.Sin(Time.timeSinceLevelLoad);
             return data;
+        }
+
+        public override bool GetVisibility() {
+            return Viewed;
         }
     }
 

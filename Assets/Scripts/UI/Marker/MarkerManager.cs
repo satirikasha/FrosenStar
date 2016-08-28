@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Linq;
 using System.Collections.Generic;
+using Tools;
+using System;
 
 namespace UI.Markers {
 
@@ -13,48 +15,34 @@ namespace UI.Markers {
 
         public static void RegisterProvider(MarkerProvider provider) {
             _MarkerProviders.Add(provider);
+            provider.OnVisibilityChanged += OnProviderVisibilityChanged;
+            OnProviderVisibilityChanged(provider);
         }
 
         public static void UnregisterProvider(MarkerProvider provider) {
             _MarkerProviders.Remove(provider);
-
-            //if (Instance != null){
-            //    var bindedWidget = Instance._MarkerWidgets.ForEach(_ => _.MarkerProvider == provider ? 
-            //}
+            provider.OnVisibilityChanged -= OnProviderVisibilityChanged;
         }
 
-        void Start() {
-            StartCoroutine(LazyUpdate());
-        }
-
-        IEnumerator LazyUpdate() {
-            while (true) {
-                yield return new WaitForSeconds(0.5f);
-
-                var viewedProviders  = _MarkerWidgets.Select(_ => _.MarkerProvider);
-                var visibleProviders = _MarkerProviders.Where(_ => _.GetMarkerData().Visible);
-                var pendingProviders = viewedProviders.Intersect(visibleProviders);
-
-                AddMarkers(pendingProviders);
+        private static void OnProviderVisibilityChanged(MarkerProvider provider) {
+            if (provider.Visible) {
+                Instance.GetMarker(provider.RequiredMarkerType).AssignProvider(provider);
             }
         }
 
-        private void AddMarkers(IEnumerable<MarkerProvider> providers) {
-            foreach (var p in providers) {
-               
-                    //Debug.Log("Adding Marker for " + p);
-                    _MarkerWidgets.Add(InstantiateMarker(p));
-                    _Markers[p].Show();
+        private MarkerWidget GetMarker(Type t) {
+            var marker = _MarkerWidgets.FirstOrDefault(_ => !_.isActiveAndEnabled && _.GetType() == t);
+            if (marker == null) {
+                marker = AddMarker(t);
             }
+            return marker;
         }
 
-        private MarkerWidget InstantiateMarker(MarkerProvider provider) {
-            var markerWidget = Instantiate(MarkerResourcesCache.GetMarker(provider.RequiredMarkerType));
-            //markerWidget.OnProviderDestroyed += _ => _Markers.Remove(_.MarkerProvider);
+        private MarkerWidget AddMarker(Type type) {
+            var markerWidget = Instantiate(MarkerResourcesCache.GetMarker(type));
             markerWidget.transform.SetParent(this.transform);
             markerWidget.transform.localScale = Vector3.one;
-            markerWidget.MarkerProvider = provider;
-            markerWidget.Init();
+            _MarkerWidgets.Add(markerWidget);
             return markerWidget;
         }
 

@@ -2,30 +2,51 @@
 using System.Collections;
 using System;
 
-public class SingletonBehaviour<T> : MonoBehaviour where T : MonoBehaviour {
+namespace Tools {
 
-    public static T Instance { get; private set; }
 
-    public virtual void OnEnable() {
-        Register();
-    }
+    public class SingletonBehaviour<T> : MonoBehaviour where T : MonoBehaviour {
 
-    public virtual void OnDestroy() {
-        Unregister();
-    }
-
-    private void Register() {
-        if (Instance != this) {
-            if (Instance == null) {
-                Instance = this as T;
+        public static T Instance {
+            get
+            {
+                if (_Instance == null) {
+                    _Instance = GameObject.FindObjectOfType<T>();
+                }
+                return _Instance;
             }
-            else {
-                throw new Exception("Attempted to register second singleton instance of type " + Instance.GetType().Name);
+            private set
+            {
+                _Instance = value;
             }
         }
-    }
+        private static T _Instance;
 
-    private void Unregister() {
-        Instance = null;
+        public virtual void Awake() {
+            Register();
+        }
+
+        public virtual void OnEnable() {
+            Register();
+        }
+
+        public virtual void OnDestroy() {
+            Unregister();
+        }
+
+        private void Register() {
+            if (Instance != this) {
+                if (Instance == null) {
+                    Instance = this as T;
+                }
+                else {
+                    throw new Exception("Attempted to register second singleton instance of type " + Instance.GetType().Name);
+                }
+            }
+        }
+
+        private void Unregister() {
+            Instance = null;
+        }
     }
 }

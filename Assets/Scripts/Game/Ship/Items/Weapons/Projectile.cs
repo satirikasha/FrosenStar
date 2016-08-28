@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityStandardAssets.CinematicEffects;
+using Tools;
 
 public class Projectile : MonoBehaviour {
     public float InitialSpeed = 3;

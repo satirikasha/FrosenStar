@@ -9,59 +9,51 @@ namespace UI.Markers {
 
         //public event Action<MarkerWidget> OnProviderDestroyed;
 
-        public MarkerProvider MarkerProvider;
-
         public bool Visible { get; protected set; }
 
         protected RectTransform RectTransform { get; private set; }
-        private Animator _Animator;
 
-        private Coroutine CurrentDisableCor;
+        public MarkerProvider _MarkerProvider;
+        private Animator _Animator;
+        private Coroutine _CurrentDisableCor;
 
         void Awake() {
             RectTransform = (RectTransform)this.transform;
-        }
-
-        public virtual void Init() {
-            RectTransform = (RectTransform)this.transform;
             _Animator = this.GetComponent<Animator>();
-            this.gameObject.SetActive(false);
-            Visible = false;
         }
-        
+
         void LateUpdate() {
-
-            UpdateMarker(MarkerProvider.GetMarkerData());
-
-            //if (MarkerProvider == null || ((MonoBehaviour)MarkerProvider) == null) {
-            //    OnProviderDestroyed(this);
-            //    Destroy(this.gameObject);
-            //    return;
-            //}
-
-            //if (!MarkerProvider.GetMarkerVisibility())
-            //    Hide();
-            //SetPosition(TransformPosition(MarkerProvider.GetMarkerWorldPos()));
-            //SetType(MarkerProvider.GetMarkerType());
-            //SetColor(MarkerProvider.GetMarkerColor());
-            //SetMessage(MarkerProvider.GetMarkerMessage());
-        }
-
-        public virtual void UpdateMarker(MarkerData data) {
-            if (data.Visible) {
-                Show();
+            if (_MarkerProvider != null) {
+                UpdateMarker(_MarkerProvider.GetMarkerData());
             }
             else {
                 Hide();
             }
+        }
+
+        public virtual void UpdateMarker(MarkerData data) {
             RectTransform.localPosition = TransformPosition(data.WorldPosition);
+        }
+
+        public void AssignProvider(MarkerProvider provider) {
+            _MarkerProvider = provider;
+            provider.OnVisibilityChanged += OnProviderVisibilityChanged;
+            Show();
+        }
+
+        private void OnProviderVisibilityChanged(MarkerProvider provider) {
+            if (!provider.Visible) {
+                provider.OnVisibilityChanged -= OnProviderVisibilityChanged;
+                _MarkerProvider = null;
+                Hide();
+            }
         }
 
         public void Show() {
             if (!Visible) {
                 Visible = true;
-                if (CurrentDisableCor != null)
-                    StopCoroutine(CurrentDisableCor);
+                if (_CurrentDisableCor != null)
+                    StopCoroutine(_CurrentDisableCor);
                 this.gameObject.SetActive(true);
                 if (_Animator)
                     _Animator.SetBool("Visible", true);
@@ -73,13 +65,14 @@ namespace UI.Markers {
                 Visible = false;
                 if (_Animator)
                     _Animator.SetBool("Visible", false);
-                CurrentDisableCor = StartCoroutine(DisableOnAnimationFinished());
+                _CurrentDisableCor = StartCoroutine(DisableOnAnimationFinished());
             }
         }
 
         private IEnumerator DisableOnAnimationFinished() {
             yield return null;
-            yield return new WaitUntil(() => _Animator.GetCurrentAnimatorStateInfo(0).normalizedTime == 1);
+            if (_Animator != null)
+                yield return new WaitUntil(() => _Animator.GetCurrentAnimatorStateInfo(0).normalizedTime == 1);
             //yield return new WaitForSeconds(_Animator.GetCurrentAnimatorStateInfo(0).length);
             this.gameObject.SetActive(false);
         }

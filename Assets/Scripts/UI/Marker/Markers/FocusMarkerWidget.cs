@@ -11,6 +11,8 @@ namespace UI.Markers {
         public Image ProgressImage;
 
         public override void UpdateMarker(MarkerData data) {
+            base.UpdateMarker(data);
+
             var focusData = (FocusMarkerData)data;
             ProgressImage.fillAmount = focusData.FocusProgress;
         }

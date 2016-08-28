@@ -3,6 +3,7 @@ using System.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Tools;
 
 public class UIManager : SingletonBehaviour<UIManager> {
 

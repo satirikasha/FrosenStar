@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using Tools;
 
 public class GameManager : SingletonBehaviour<GameManager> {
 
