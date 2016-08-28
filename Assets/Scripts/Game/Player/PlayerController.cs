@@ -15,7 +15,7 @@ public class PlayerController : MonoBehaviour {
 
     public Vector3 Position {
         get {
-            return this.transform.position;
+            return Ship.Position;
         }
     }
 

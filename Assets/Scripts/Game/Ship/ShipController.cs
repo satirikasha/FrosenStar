@@ -10,7 +10,14 @@ public class ShipController : MonoBehaviour {
     public Vector3 Velocity {
         get
         {
-            return _Rigidbody.velocity;
+            return Rigidbody.velocity;
+        }
+    }
+
+    public Vector3 Position {
+        get
+        {
+            return Rigidbody.position;
         }
     }
 
@@ -19,14 +26,14 @@ public class ShipController : MonoBehaviour {
     public float StabilizationScaleLon = 1;
     public float StabilizationScaleLat = 5;
 
+    public Rigidbody Rigidbody { get; private set; }
     public List<ItemSlot> ItemSlots { get; private set; }
     public List<Weapon> Weapons{ get; private set; }
     public List<Engine> Engines { get; private set; }
 
-    private Rigidbody _Rigidbody;
 
     void Awake() {
-        _Rigidbody = this.GetComponent<Rigidbody>();        
+        Rigidbody = this.GetComponent<Rigidbody>();        
     }
 
     void Start() {
@@ -40,37 +47,45 @@ public class ShipController : MonoBehaviour {
     }
 
     void Update() {
-            UpdateWeapons();
+        UpdateWeapons();
     }
 
     private void UpdateEngines() {
-        var vertical = Input.GetAxis("Vertical");
-        Engines.ForEach(_ => _.ApplyThrust(_Rigidbody, vertical));
+        if (ApplicationManager.GameMode) {
+            var vertical = Input.GetAxis("Vertical");
+            Engines.ForEach(_ => _.ApplyThrust(Rigidbody, vertical));
+        }
     }
 
     private void UpdateRotationTorque() {
-        var horizontal = Input.GetAxis("Horizontal");
-        var turnTorque = this.transform.up * horizontal * TurnTorque;
-        var rollTorque = this.transform.forward * horizontal * TurnTorque * BodyRollCoeff * -1;
-        _Rigidbody.AddTorque(turnTorque + rollTorque);
+        if (ApplicationManager.GameMode) {
+            var horizontal = Input.GetAxis("Horizontal");
+            var turnTorque = this.transform.up * horizontal * TurnTorque;
+            var rollTorque = this.transform.forward * horizontal * TurnTorque * BodyRollCoeff * -1;
+            Rigidbody.AddTorque(turnTorque + rollTorque);
+        }
     }
 
     private void UpdateStabilizationTorque() {
-        var lonRotation = this.transform.rotation.eulerAngles.z;
-        var latRotation = this.transform.rotation.eulerAngles.x;
-        var lonOffset = lonRotation > 180 ? lonRotation - 360 : lonRotation;
-        var latOffset = latRotation > 180 ? latRotation - 360 : latRotation;
-        var lonStabilization = -lonOffset * StabilizationTorque * StabilizationScaleLon * this.transform.forward;
-        var latStabilization = -latOffset * StabilizationTorque * StabilizationScaleLat * this.transform.right;
-        _Rigidbody.AddTorque(lonStabilization + latStabilization);
+        if (ApplicationManager.GameMode) {
+            var lonRotation = this.transform.rotation.eulerAngles.z;
+            var latRotation = this.transform.rotation.eulerAngles.x;
+            var lonOffset = lonRotation > 180 ? lonRotation - 360 : lonRotation;
+            var latOffset = latRotation > 180 ? latRotation - 360 : latRotation;
+            var lonStabilization = -lonOffset * StabilizationTorque * StabilizationScaleLon * this.transform.forward;
+            var latStabilization = -latOffset * StabilizationTorque * StabilizationScaleLat * this.transform.right;
+            Rigidbody.AddTorque(lonStabilization + latStabilization);
+        }
     }
 
     private void UpdateWeapons() {
-        if (Input.GetButtonDown("Fire") && !GameManager.Instance.Paused) {
-            Weapons.ForEach(_ => _.StartFire());
-        }
-        if (Input.GetButtonUp("Fire")) {
-            Weapons.ForEach(_ => _.StopFire());
+        if (ApplicationManager.GameMode) {
+            if (Input.GetButtonDown("Fire") && !GameManager.Instance.Paused) {
+                Weapons.ForEach(_ => _.StartFire());
+            }
+            if (Input.GetButtonUp("Fire")) {
+                Weapons.ForEach(_ => _.StopFire());
+            }
         }
     }
 
