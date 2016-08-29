@@ -1,13 +1,14 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System;
+using Tools.EQS;
 
 namespace UI.Markers {
 
 
     public class FocusMarkerProvider : MarkerProvider {
 
-        public bool Viewed;
+        private EQSItem _EQSItem;
 
         public override Type RequiredMarkerType {
             get {
@@ -18,12 +19,16 @@ namespace UI.Markers {
         public override MarkerData GetMarkerData() {
             var data = new FocusMarkerData();
             data.WorldPosition = this.transform.position;
-            data.FocusProgress = Mathf.Sin(Time.timeSinceLevelLoad);
+            data.FocusProgress = (Mathf.Sin(Time.timeSinceLevelLoad) + 1) / 2;
             return data;
         }
 
         public override bool GetVisibility() {
-            return Viewed;
+            return _EQSItem == PlayerController.LocalPlayer.SelectedItem;
+        }
+
+        void Awake() {
+            _EQSItem = this.GetComponent<EQSItem>();
         }
     }
 

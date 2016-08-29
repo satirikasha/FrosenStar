@@ -1,15 +1,29 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class EQSItem : MonoBehaviour {
+namespace Tools.EQS {
 
-	// Use this for initialization
-	void Start () {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
+
+    public class EQSItem : MonoBehaviour {
+
+        public bool Visible { get; private set; }
+
+        public Vector3 Delta { get; set; }
+
+        void OnEnable() {
+            EQS.RegisterItem(this);
+        }
+
+        void OnDisable() {
+            EQS.UnregisterItem(this);
+        }
+
+        public void OnBecameVisible() {
+            Visible = true;
+        }
+
+        public void OnBecameInvisible() {
+            Visible = false;
+        }
+    }
 }

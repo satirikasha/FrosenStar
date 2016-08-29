@@ -1,30 +1,37 @@
 ﻿using UnityEngine;
 using System.Collections;
-using Tools;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Tools.EQS {
 
 
-    public class EQSManager : SingletonBehaviour<EQSManager> {
+    public static class EQS {
 
-        private const int Capacity = 1000;
-        private const float ItemRadius = 0.5f;
+        private static HashSet<EQSItem> _EQSItems = new HashSet<EQSItem>();
 
-        private CullingGroup _CullingGroup;
-        private BoundingSphere[] _BoundingSpheres;
-
-        public override void Awake() {
-            base.Awake();
-            CullingGroup _CullingGroup = new CullingGroup();
-            _CullingGroup.targetCamera = Camera.main;
-            _BoundingSpheres = new BoundingSphere[Capacity];
-            
+        public static void RegisterItem(EQSItem item) {
+            _EQSItems.Add(item);
         }
 
-        public override void OnDestroy() {
-            base.OnDestroy();
-            _CullingGroup.Dispose();
-            _CullingGroup = null;
+        public static void UnregisterItem(EQSItem item) {
+            _EQSItems.Remove(item);
+        }
+
+        public static IEnumerable<EQSItem> GetItems(float radius) {
+            var r2 = radius * radius;
+            return _EQSItems.Where(_ => {
+                _.Delta = _.transform.position - PlayerController.LocalPlayer.Position;
+                return _.Delta.sqrMagnitude < r2;
+            });
+        }
+
+        public static IEnumerable<EQSItem> GetItems(float radius, bool visible) {
+            var r2 = radius * radius;
+            return _EQSItems.Where(_ => {
+                _.Delta = _.transform.position - PlayerController.LocalPlayer.Position;
+                return _.Visible == visible && _.Delta.sqrMagnitude < r2;
+            });
         }
     }
 }

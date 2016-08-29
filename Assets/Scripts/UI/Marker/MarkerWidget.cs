@@ -13,9 +13,10 @@ namespace UI.Markers {
 
         protected RectTransform RectTransform { get; private set; }
 
-        public MarkerProvider _MarkerProvider;
+        private MarkerProvider _MarkerProvider;
         private Animator _Animator;
         private Coroutine _CurrentDisableCor;
+        private MarkerData _CachedMarkerData;
 
         void Awake() {
             RectTransform = (RectTransform)this.transform;
@@ -24,11 +25,13 @@ namespace UI.Markers {
 
         void LateUpdate() {
             if (_MarkerProvider != null) {
-                UpdateMarker(_MarkerProvider.GetMarkerData());
+                _CachedMarkerData = _MarkerProvider.GetMarkerData();
             }
             else {
                 Hide();
             }
+
+            UpdateMarker(_CachedMarkerData);
         }
 
         public virtual void UpdateMarker(MarkerData data) {
@@ -44,7 +47,6 @@ namespace UI.Markers {
         private void OnProviderVisibilityChanged(MarkerProvider provider) {
             if (!provider.Visible) {
                 provider.OnVisibilityChanged -= OnProviderVisibilityChanged;
-                _MarkerProvider = null;
                 Hide();
             }
         }
@@ -72,8 +74,8 @@ namespace UI.Markers {
         private IEnumerator DisableOnAnimationFinished() {
             yield return null;
             if (_Animator != null)
-                yield return new WaitUntil(() => _Animator.GetCurrentAnimatorStateInfo(0).normalizedTime == 1);
-            //yield return new WaitForSeconds(_Animator.GetCurrentAnimatorStateInfo(0).length);
+                //yield return new WaitUntil(() => _Animator.GetCurrentAnimatorStateInfo(0).normalizedTime == 1);
+                yield return new WaitForSeconds(_Animator.GetCurrentAnimatorStateInfo(0).length);
             this.gameObject.SetActive(false);
         }
 
