@@ -21,6 +21,24 @@ public class ShipController : MonoBehaviour {
         }
     }
 
+    public float Health { get; private set; }
+    public float NormalizedHealth {
+        get
+        {
+            return Health / MaxHealth;
+        }
+    }
+    public float MaxHealth = 100;
+
+    public float Energy { get; private set; }
+    public float NormalizedEnergy {
+        get
+        {
+            return Energy / MaxEnergy;
+        }
+    }
+    public float MaxEnergy = 100;
+
     public float TurnTorque = 150;
     public float StabilizationTorque = 2.5f;
     public float StabilizationScaleLon = 1;
@@ -28,12 +46,14 @@ public class ShipController : MonoBehaviour {
 
     public Rigidbody Rigidbody { get; private set; }
     public List<ItemSlot> ItemSlots { get; private set; }
-    public List<Weapon> Weapons{ get; private set; }
+    public List<Weapon> Weapons { get; private set; }
     public List<Engine> Engines { get; private set; }
 
 
     void Awake() {
-        Rigidbody = this.GetComponent<Rigidbody>();        
+        Rigidbody = this.GetComponent<Rigidbody>();
+        Health = MaxHealth;
+        Energy = MaxEnergy;
     }
 
     void Start() {
@@ -50,10 +70,20 @@ public class ShipController : MonoBehaviour {
         UpdateWeapons();
     }
 
+    public void OnCollisionEnter(Collision collision) {
+        Debug.Log(collision.impulse.magnitude);
+        Health -= collision.impulse.magnitude / 5;
+    }
+
+    public void OnCollisionStay(Collision collision) {
+        Debug.Log(collision.impulse.magnitude);
+        Health -= collision.impulse.magnitude / 5;
+    }
+
     private void UpdateEngines() {
         if (ApplicationManager.GameMode) {
             var vertical = Input.GetAxis("Vertical");
-            Engines.ForEach(_ => _.ApplyThrust(Rigidbody, vertical));
+            Engines.ForEach(_ => _.ApplyThrust(Rigidbody, vertical, Time.fixedDeltaTime));
         }
     }
 
@@ -93,5 +123,22 @@ public class ShipController : MonoBehaviour {
         ItemSlots = this.GetComponentsInChildren<ItemSlot>().ToList();
         Weapons = ItemSlots.Select(_ => _.Item).OfType<Weapon>().ToList();
         Engines = ItemSlots.Select(_ => _.Item).OfType<Engine>().ToList();
+    }
+
+    /// <summary>
+    /// Perform energy consumption
+    /// </summary>
+    /// <param name="energy">Ammount of energy to consume</param>
+    /// <returns>Transaction successful</returns>
+    public bool ConsumeEnergy(float energy) {
+        if(Energy >= energy) {
+            Energy -= energy;
+            return true;
+        }
+        return false;
+    }
+
+    public void RestoreEnergy(float energy) {
+        Energy = Mathf.Clamp(Energy + energy, 0, MaxEnergy);
     }
 }

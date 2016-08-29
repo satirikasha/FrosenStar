@@ -3,6 +3,8 @@ using System.Collections;
 
 public abstract class Weapon : ShipItem {
 
+    public float EnergyConsumption = 0.5f;
+
     public float Cooldown = 0.15f;
 
     public bool Recharged { get; private set; }
@@ -27,7 +29,7 @@ public abstract class Weapon : ShipItem {
     }
 
     protected virtual void Fire() {
-        if (Recharged) {
+        if (Recharged && Ship.ConsumeEnergy(EnergyConsumption)) {
             Recharged = false;
             PerformShot();
             Recharge();
