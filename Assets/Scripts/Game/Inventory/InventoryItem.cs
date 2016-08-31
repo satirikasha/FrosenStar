@@ -5,6 +5,7 @@ using System;
 [Serializable]
 public class InventoryItem {
     public string Name;
-    public string Description;
     public Texture2D Preview;
+    [TextArea(1, 5)]
+    public string Description;
 }
