@@ -5,6 +5,16 @@ using System;
 
 namespace Tools.UI.Markers {
 
+    public abstract class MarkerWidget<T> : MarkerWidget where T : MarkerData {
+
+        public sealed override void UpdateMarker(MarkerData data) {
+            base.UpdateMarker(data);
+            UpdateMarker((T)data);
+        }
+
+        public abstract void UpdateMarker(T data);
+    }
+
     public abstract class MarkerWidget : MonoBehaviour {
 
         //public event Action<MarkerWidget> OnProviderDestroyed;

@@ -7,12 +7,9 @@ using Tools.UI.Markers;
 namespace UI.Markers {
 
 
-    public class SlotMarkerWidget : MarkerWidget {
+    public class SlotMarkerWidget : MarkerWidget<SlotMarkerData> {
 
-        public override void UpdateMarker(MarkerData data) {
-            base.UpdateMarker(data);
-
-            var focusData = (SlotMarkerData)data;
+        public override void UpdateMarker(SlotMarkerData data) {
         }
     }
 }
