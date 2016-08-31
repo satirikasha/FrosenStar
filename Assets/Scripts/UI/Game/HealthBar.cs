@@ -12,5 +12,8 @@ public class HealthBar : MonoBehaviour {
 	
 	void Update () {
         _Slider.value = PlayerController.LocalPlayer.Ship.NormalizedHealth;
+        if (_Slider.value == 0)
+            _Slider.fillRect.gameObject.SetActive(false);
+
 	}
 }

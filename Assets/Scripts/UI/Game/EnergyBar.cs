@@ -12,5 +12,7 @@ public class EnergyBar : MonoBehaviour {
 	
 	void Update () {
         _Slider.value = PlayerController.LocalPlayer.Ship.NormalizedEnergy;
-	}
+        if (_Slider.value == 0)
+            _Slider.fillRect.gameObject.SetActive(false);
+    }
 }

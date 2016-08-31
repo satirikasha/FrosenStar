@@ -2,10 +2,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Tools.Damage;
 
-public class ShipController : MonoBehaviour {
+public class ShipController : MonoBehaviour, IDamagable {
 
     private const float BodyRollCoeff = 0.5f;
+    private const float CollisionDamageCoeff = 0.2f;
 
     public Vector3 Velocity {
         get
@@ -71,13 +73,11 @@ public class ShipController : MonoBehaviour {
     }
 
     public void OnCollisionEnter(Collision collision) {
-        Debug.Log(collision.impulse.magnitude);
-        Health -= collision.impulse.magnitude / 5;
+        ApplyCollisionDamage(collision);
     }
 
     public void OnCollisionStay(Collision collision) {
-        Debug.Log(collision.impulse.magnitude);
-        Health -= collision.impulse.magnitude / 5;
+        ApplyCollisionDamage(collision);
     }
 
     private void UpdateEngines() {
@@ -125,11 +125,20 @@ public class ShipController : MonoBehaviour {
         Engines = ItemSlots.Select(_ => _.Item).OfType<Engine>().ToList();
     }
 
-    /// <summary>
-    /// Perform energy consumption
-    /// </summary>
-    /// <param name="energy">Ammount of energy to consume</param>
-    /// <returns>Transaction successful</returns>
+    public void ApplyCollisionDamage(Collision collision) {
+        ApplyDamage(
+            new Damage() {
+                Ammount = collision.impulse.magnitude * CollisionDamageCoeff,
+                Instigator = collision.gameObject,
+                Source = collision.gameObject,
+                Type = DamageType.Physical
+            });
+    }
+
+    public void ApplyDamage(Damage damage) {
+        Health = Mathf.Max(0, Health - damage.Ammount);
+    }
+
     public bool ConsumeEnergy(float energy) {
         if(Energy >= energy) {
             Energy -= energy;
