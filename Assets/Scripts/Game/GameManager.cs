@@ -18,7 +18,6 @@ public class GameManager : SingletonBehaviour<GameManager> {
 	}
 
     public void UpdateInput() {
-        var a = InventoryItemsConfig.Instance;
         if (Input.GetKeyUp(KeyCode.I)) {
             var inventoryPanel = UIManager.GetPanel("InventoryPanel");
             if (!Paused) {
