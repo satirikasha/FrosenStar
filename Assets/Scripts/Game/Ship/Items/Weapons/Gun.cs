@@ -3,15 +3,12 @@ using UnityEngine;
 
 public class Gun : Weapon {
 
-    public InventoryItem Itess;
-
     public Projectile Projectile;
 
     public Transform FirePivot;
 
     public override void Awake() {
         base.Awake();
-        Debug.Log(Itess.name);
     }
 
     protected override void PerformShot() {

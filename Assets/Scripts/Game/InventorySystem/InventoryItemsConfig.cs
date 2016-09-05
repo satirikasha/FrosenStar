@@ -5,18 +5,17 @@ using System.Collections.Generic;
 using System.Linq;
 
 public static class InventoryItemsConfig {
-    public static List<InventoryItem> Items {
+    public static List<InventoryItemTemplate> Items {
         get {
             if (_Items == null)
                 RefreshItems();
             return _Items;
         }
     }
-    private static List<InventoryItem> _Items;
+    private static List<InventoryItemTemplate> _Items;
 
     public static void RefreshItems() {
-        _Items = Resources.LoadAll<InventoryItem>("Items").ToList();
-        Debug.Log("Items refreshed: " + _Items.Count);
+        _Items = Resources.LoadAll<InventoryItemTemplate>("Items").ToList();
     }
 
     public static List<string> GetItemNames() {

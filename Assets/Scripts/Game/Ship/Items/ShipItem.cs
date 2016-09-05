@@ -3,8 +3,7 @@ using System.Collections;
 
 public abstract class ShipItem : MonoBehaviour {
 
-    [InventoryItemID]
-    public string ItemID;
+    public InventoryItemTemplate ItemTemplate;
 
     protected ItemSlot Slot { get; private set; }
 

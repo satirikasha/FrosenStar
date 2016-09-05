@@ -11,7 +11,6 @@ public class InventoryItemIDDrawer : PropertyDrawer {
         var options  = InventoryItemsConfig.GetItemNames();
         var selected = options.IndexOf(property.stringValue);
         var result   = EditorGUI.Popup(position, "Inventory Item", selected, options.ToArray());
-        Debug.Log(result);
         property.stringValue = options.ElementAtOrDefault(result);
     }
 }

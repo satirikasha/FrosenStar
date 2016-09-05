@@ -4,8 +4,6 @@ using Tools;
 
 public class GameManager : SingletonBehaviour<GameManager> {
 
-    public InventoryItem Item;
-
     public bool Paused {
         get
         {
