@@ -46,7 +46,7 @@ public class InventoryItemTemplate : ScriptableObject {
 }
 
 [Serializable]
-public abstract class InventoryItem {
+public class InventoryItem {
     public string Name;
     public Texture2D Preview;
     [Multiline]

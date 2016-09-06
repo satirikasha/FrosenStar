@@ -32,6 +32,5 @@ public class PlayerController : MonoBehaviour {
 
     void Update() {
         SelectedItem = EQS.GetItems(5).OrderBy(_ => Vector3.Dot(-_.Delta.normalized, this.transform.forward)).FirstOrDefault();
-        Debug.Log(Inventory.Items.Count);
     }
 }

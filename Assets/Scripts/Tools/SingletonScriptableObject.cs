@@ -23,7 +23,7 @@ namespace Tools {
 #if UNITY_EDITOR
                 return "Assets/Resources/Config/" + typeof(T).Name + ".asset";
 #else
-                return "Config/" + typeof(T).Name();
+                return "Config/" + typeof(T).Name;
 #endif
             }
         }
@@ -39,7 +39,7 @@ namespace Tools {
             }
             _Instance = asset;
 #else
-            _Instance = Resources.Load<T>(GeneratePathToResources());
+            _Instance = Resources.Load<T>(Path);
 #endif
         }
 

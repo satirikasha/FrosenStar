@@ -11,6 +11,11 @@ public class GameManager : SingletonBehaviour<GameManager> {
         }
     }
 
+    public override void Awake() {
+        base.Awake();
+        Application.targetFrameRate = 1000;
+    }
+
     void Update () {
         UpdateInput();
 	}

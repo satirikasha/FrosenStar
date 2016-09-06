@@ -5,7 +5,7 @@ using System.Linq;
 
 public class Container : Inventory {
 
-    public List<InventoryItemTemplate> Templates;
+    public List<StackableItemWrapper> Templates;
 
     void Awake() {
         AddItems(Templates.Select(_ => _.GenerateItem()), this);
