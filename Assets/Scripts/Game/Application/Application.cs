@@ -11,4 +11,8 @@ public class ApplicationManager {
             return SceneManager.GetActiveScene().name == "Game";
         }
     }
+
+    public static string[] GetHangerNames() {
+        SceneManager.GetAllScenes
+    }
 }

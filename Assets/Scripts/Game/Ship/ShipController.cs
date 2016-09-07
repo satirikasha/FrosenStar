@@ -47,6 +47,8 @@ public class ShipController : MonoBehaviour, IDamagable {
     public float StabilizationScaleLat = 5;
 
     public Rigidbody Rigidbody { get; private set; }
+    public Inventory Inventory { get; private set; }
+
     public List<ItemSlot> ItemSlots { get; private set; }
     public List<Weapon> Weapons { get; private set; }
     public List<Engine> Engines { get; private set; }
@@ -54,6 +56,7 @@ public class ShipController : MonoBehaviour, IDamagable {
 
     void Awake() {
         Rigidbody = this.GetComponent<Rigidbody>();
+        Inventory = this.GetComponent<Inventory>();
         Health = MaxHealth;
         Energy = MaxEnergy;
     }

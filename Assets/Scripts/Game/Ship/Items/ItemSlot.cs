@@ -18,10 +18,15 @@ public class ItemSlot : MonoBehaviour {
     public ShipController Ship { get; private set; }
     public ShipItem Item { get; private set; }
 
-    void Awake() {
+    void Start() {
         Ship = this.transform.GetComponentInParent<ShipController>();
-        if (DefaultItem != null)
-            Equip(DefaultItem.GenerateItem() as SlotItem);
+        // TODO: Check if slot has allready been initialized
+        if (DefaultItem != null) {
+            var item = DefaultItem.GenerateItem() as SlotItem;
+            Inventory.AddItem(item, Ship.Inventory);
+            Debug.Log(Ship.Inventory);
+            Equip(item);
+        }
     }
 
     public bool Equip(SlotItem item) {
