@@ -15,5 +15,9 @@ public class CargoItemTemplate : SlotItemTemplate<CargoItem> {
 [Serializable]
 public class CargoItem : SlotItem {
     public float Capacity;
+
+    public override bool CheckCompatability(ItemSlot.SlotType type) {
+        return type == ItemSlot.SlotType.Cargo;
+    }
 }
 

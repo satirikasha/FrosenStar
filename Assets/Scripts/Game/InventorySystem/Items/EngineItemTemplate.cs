@@ -20,5 +20,9 @@ public class EngineItemTemplate : SlotItemTemplate<EngineItem> {
 public class EngineItem : SlotItem {
     public float EnergyConsumption;
     public float Thrust;
+
+    public override bool CheckCompatability(ItemSlot.SlotType type) {
+        return type == ItemSlot.SlotType.Engine;
+    }
 }
 

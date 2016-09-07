@@ -11,7 +11,9 @@ public class Engine : ShipItem {
         if (throttle < 0)
             throttle *= 0.25f;
 
-        if (Ship.ConsumeEnergy(Mathf.Abs(throttle) * deltaTime * EnergyConsumption))
-            rigidbody.AddForceAtPosition(this.transform.forward * throttle * Thrust, this.transform.position);
+        if (Ship.ConsumeEnergy(Mathf.Abs(throttle) * deltaTime * EnergyConsumption)) {
+            // WARNING: Forward vector depends on a model (in this case "-this.transform.right")
+            rigidbody.AddForceAtPosition(-this.transform.right * throttle * Thrust, this.transform.position);
+        }
     }
 }

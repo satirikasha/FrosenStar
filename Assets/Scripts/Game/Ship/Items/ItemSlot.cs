@@ -13,12 +13,26 @@ public class ItemSlot : MonoBehaviour {
     }
 
     public SlotType Type;
+    public InventoryItemTemplate DefaultItem;
+
     public ShipController Ship { get; private set; }
     public ShipItem Item { get; private set; }
 
     void Awake() {
         Ship = this.transform.GetComponentInParent<ShipController>();
-        Item = this.transform.GetChild(0).GetComponent<ShipItem>();
-        Item.SetSlot(this);
+        if (DefaultItem != null)
+            Equip(DefaultItem.GenerateItem() as SlotItem);
+    }
+
+    public bool Equip(SlotItem item) {
+        if (item != null && item.CheckCompatability(Type)) {
+            var shipItem = item.Instantiate();
+            shipItem.transform.SetParent(this.transform);
+            shipItem.transform.localPosition = Vector3.zero;
+            shipItem.transform.localRotation = Quaternion.identity;
+            Item = shipItem;
+            Item.SetSlot(this);
+        }
+        return false;
     }
 }

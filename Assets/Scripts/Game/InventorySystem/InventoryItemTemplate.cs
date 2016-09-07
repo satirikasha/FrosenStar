@@ -13,12 +13,13 @@ public abstract class InventoryItemTemplate<T> : InventoryItemTemplate where T :
         }
     }
 
+    protected virtual void SetItemValues(ref T item) {}
+
     protected sealed override void SetItemValues<I>(ref I item) {
         base.SetItemValues(ref item);
-    }
-
-    protected virtual void SetItemValues(ref T item) {
-        base.SetItemValues(ref item);
+        var genericItem = item as T;
+        SetItemValues(ref genericItem);
+        item = genericItem as I;
     }
 }
 
@@ -46,7 +47,7 @@ public class InventoryItemTemplate : ScriptableObject {
 }
 
 [Serializable]
-public abstract class InventoryItem {
+public class InventoryItem {
     public string Name;
     public Texture2D Preview;
     [Multiline]

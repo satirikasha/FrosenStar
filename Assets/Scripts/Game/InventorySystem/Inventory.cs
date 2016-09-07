@@ -4,14 +4,14 @@ using System.Collections.Generic;
 
 public class Inventory : MonoBehaviour {
 
-    public List<InventoryItem> Items {
-        get {
-            if (_Items == null)
-                _Items = new List<InventoryItem>();
-            return _Items;
-        }
-    }
-    private List<InventoryItem> _Items;
+    //public List<InventoryItem> Items {
+    //    get {
+    //        if (_Items == null)
+    //            _Items = new List<InventoryItem>();
+    //        return _Items;
+    //    }
+    //}
+    public List<InventoryItem> Items;// _Items;
 
     public static void AddItem(InventoryItem item, Inventory target) {
         target.Items.Add(item);
