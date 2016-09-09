@@ -4,7 +4,7 @@ using System.Collections;
 [RequireComponent(typeof(Collider))]
 public class HangarPort : MonoBehaviour {
 
-    
+    [HangarName]
     public string HangarName;
 
     private Coroutine _PortActivation;
@@ -23,6 +23,6 @@ public class HangarPort : MonoBehaviour {
 
     private IEnumerator ActivatePort() {
         yield return new WaitForSeconds(3);
-        Debug.Log("Port activated");
+        ApplicationManager.EnterHangar(HangarName);
     }
 }

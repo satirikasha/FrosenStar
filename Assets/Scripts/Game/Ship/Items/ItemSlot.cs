@@ -24,7 +24,6 @@ public class ItemSlot : MonoBehaviour {
         if (DefaultItem != null) {
             var item = DefaultItem.GenerateItem() as SlotItem;
             Inventory.AddItem(item, Ship.Inventory);
-            Debug.Log(Ship.Inventory);
             Equip(item);
         }
     }
@@ -35,6 +34,7 @@ public class ItemSlot : MonoBehaviour {
             shipItem.transform.SetParent(this.transform);
             shipItem.transform.localPosition = Vector3.zero;
             shipItem.transform.localRotation = Quaternion.identity;
+            shipItem.transform.localScale    = Vector3.one;
             Item = shipItem;
             Item.SetSlot(this);
         }
