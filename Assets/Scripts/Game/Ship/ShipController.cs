@@ -23,25 +23,24 @@ public class ShipController : MonoBehaviour, IDamagable {
         }
     }
 
+    public ShipItem Item;
+
     public float Health { get; private set; }
     public float NormalizedHealth {
         get
         {
-            return Health / MaxHealth;
+            return Health / Item.Health;
         }
     }
-    public float MaxHealth = 100;
 
     public float Energy { get; private set; }
     public float NormalizedEnergy {
         get
         {
-            return Energy / MaxEnergy;
+            return Energy / Item.Energy;
         }
     }
-    public float MaxEnergy = 100;
 
-    public float TurnTorque = 150;
     public float StabilizationTorque = 2.5f;
     public float StabilizationScaleLon = 1;
     public float StabilizationScaleLat = 5;
@@ -57,11 +56,14 @@ public class ShipController : MonoBehaviour, IDamagable {
     void Awake() {
         Rigidbody = this.GetComponent<Rigidbody>();
         Inventory = this.GetComponent<Inventory>();
-        Health = MaxHealth;
-        Energy = MaxEnergy;
     }
 
     void Start() {
+        Health = Item.Health;
+        Energy = Item.Energy;
+        Rigidbody.mass = Item.Mass;
+        Rigidbody.drag = Item.Mass * 0.005f;
+        Rigidbody.angularDrag = Item.Mass * 0.025f;
         RefreshSlots();
     }
 
@@ -93,8 +95,8 @@ public class ShipController : MonoBehaviour, IDamagable {
     private void UpdateRotationTorque() {
         if (ApplicationManager.GameMode) {
             var horizontal = Input.GetAxis("Horizontal");
-            var turnTorque = this.transform.up * horizontal * TurnTorque;
-            var rollTorque = this.transform.forward * horizontal * TurnTorque * BodyRollCoeff * -1;
+            var turnTorque = this.transform.up * horizontal * Item.Handling;
+            var rollTorque = this.transform.forward * horizontal * Item.Handling * BodyRollCoeff * -1;
             Rigidbody.AddTorque(turnTorque + rollTorque);
         }
     }
@@ -151,6 +153,6 @@ public class ShipController : MonoBehaviour, IDamagable {
     }
 
     public void RestoreEnergy(float energy) {
-        Energy = Mathf.Clamp(Energy + energy, 0, MaxEnergy);
+        Energy = Mathf.Clamp(Energy + energy, 0, Item.Energy);
     }
 }

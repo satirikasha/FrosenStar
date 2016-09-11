@@ -15,6 +15,7 @@ public class Container : Inventory {
         var player = other.GetComponentInParent<PlayerController>();
         if(player != null) {
             TransitAll(this, player.GetComponent<Inventory>());
+            Destroy(this.gameObject);
         }
     }
 }

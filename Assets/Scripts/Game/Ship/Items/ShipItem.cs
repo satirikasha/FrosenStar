@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public abstract class ShipItem : MonoBehaviour {
+public abstract class ShipPart : MonoBehaviour {
 
     public InventoryItem Item;
 

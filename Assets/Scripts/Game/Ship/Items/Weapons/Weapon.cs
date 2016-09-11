@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public abstract class Weapon : ShipItem {
+public abstract class Weapon : ShipPart {
 
     public float EnergyConsumption = 0.5f;
 

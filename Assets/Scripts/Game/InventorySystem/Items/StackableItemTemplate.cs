@@ -12,7 +12,8 @@ public abstract class StackableItemTemplate<T> : InventoryItemTemplate<T> where 
     }
 }
 
-public abstract class StackableItem : InventoryItem {
+[Serializable]
+public class StackableItem : InventoryItem {
     public int Quantity;
 }
 

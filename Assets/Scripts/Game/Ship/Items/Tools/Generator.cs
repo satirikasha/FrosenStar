@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Generator : ShipItem {
+public class Generator : ShipPart {
 
     public float EnergyRegeneration = 0.5f;
 

@@ -16,9 +16,9 @@ public class ItemSlot : MonoBehaviour {
     public InventoryItemTemplate DefaultItem;
 
     public ShipController Ship { get; private set; }
-    public ShipItem Item { get; private set; }
+    public ShipPart Item { get; private set; }
 
-    void Start() {
+    void Awake() {
         Ship = this.transform.GetComponentInParent<ShipController>();
         // TODO: Check if slot has allready been initialized
         if (DefaultItem != null) {

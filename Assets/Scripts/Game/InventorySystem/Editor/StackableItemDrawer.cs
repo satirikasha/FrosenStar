@@ -7,7 +7,7 @@ using System;
 using System.Linq;
 
 [CustomPropertyDrawer(typeof(StackableItemWrapper))]
-public class StackableItemDrawer : PropertyDrawer {
+public class StackableItemTemplateDrawer : PropertyDrawer {
 
     public override void OnGUI(Rect position, SerializedProperty property, GUIContent label) {
         //EditorGUI.DrawRect(position, Color.cyan);

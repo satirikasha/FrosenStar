@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Engine : ShipItem {
+public class Engine : ShipPart {
 
     public float EnergyConsumption = 0.25f;
 
