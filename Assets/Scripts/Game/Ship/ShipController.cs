@@ -144,6 +144,10 @@ public class ShipController : MonoBehaviour, IDamagable {
         Health = Mathf.Max(0, Health - damage.Ammount);
     }
 
+    public void SetHealth(float health) {
+        Health = Mathf.Clamp(health, 0, Item.Health);
+    }
+
     public bool ConsumeEnergy(float energy) {
         if(Energy >= energy) {
             Energy -= energy;
@@ -154,5 +158,9 @@ public class ShipController : MonoBehaviour, IDamagable {
 
     public void RestoreEnergy(float energy) {
         Energy = Mathf.Clamp(Energy + energy, 0, Item.Energy);
+    }
+
+    public void SetEnergy(float energy) {
+        Energy = Mathf.Clamp(energy, 0, Item.Energy);
     }
 }

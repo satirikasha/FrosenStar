@@ -21,6 +21,12 @@ public class GameManager : SingletonBehaviour<GameManager> {
 	}
 
     public void UpdateInput() {
+        if (Input.GetKeyUp(KeyCode.K))
+            GameData.Save();
+        if (Input.GetKeyUp(KeyCode.L))
+            GameData.Load();
+
+
         if (Input.GetKeyUp(KeyCode.I)) {
             var inventoryPanel = UIManager.GetPanel("InventoryPanel");
             if (!Paused) {

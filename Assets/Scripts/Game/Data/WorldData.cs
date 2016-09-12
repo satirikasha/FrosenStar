@@ -4,7 +4,12 @@ using System;
 
 [Serializable]
 public class WorldData : IData {
-    public void RefreshData() {
+
+    public void GatherData() {
         
+    }
+
+    public void ScatterData() {
+       
     }
 }

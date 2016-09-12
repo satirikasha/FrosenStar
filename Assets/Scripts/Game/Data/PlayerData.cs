@@ -4,9 +4,13 @@ using System;
 
 [Serializable]
 public class PlayerData: IData {
-    public ShipData ShipData { get; set; }
+    public ShipData ShipData = new ShipData();
 
-    public void RefreshData() {
-        ShipData.RefreshData();
+    public void GatherData() {
+        ShipData.GatherData();
+    }
+
+    public void ScatterData() {
+        ShipData.ScatterData();
     }
 }
