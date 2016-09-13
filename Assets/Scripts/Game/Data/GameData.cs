@@ -3,6 +3,8 @@ using System.Collections;
 using System;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
+using System.Runtime.Serialization;
+using Tools.Serialization;
 
 [Serializable]
 public class GameData: IData {
@@ -47,6 +49,8 @@ public class GameData: IData {
         _Current.GatherData();
 
         var bf = new BinaryFormatter();
+        bf.SurrogateSelector = SerializationSurrogate.SurrogateSelector;
+
         using (var fs = File.Open(DataPath, FileMode.OpenOrCreate)) {
             bf.Serialize(fs, _Current);
             fs.Close();
@@ -57,7 +61,10 @@ public class GameData: IData {
         Debug.Log("Load");
         if (SavedDataExists) {
             Debug.Log("SaveGame exists");
+
             var bf = new BinaryFormatter();
+            bf.SurrogateSelector = SerializationSurrogate.SurrogateSelector;
+
             using (var fs = File.Open(DataPath, FileMode.Open)) {
                 _Current = (GameData)bf.Deserialize(fs);
                 fs.Close();
