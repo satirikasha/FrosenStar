@@ -45,7 +45,7 @@ namespace Tools {
 
 #if UNITY_EDITOR
         public void Save() {
-            EditorUtility.SetDirty(_Instance);
+            EditorUtility.SetDirty(Instance);
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
         }

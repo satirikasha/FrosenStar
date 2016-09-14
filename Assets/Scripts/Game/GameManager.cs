@@ -13,7 +13,6 @@ public class GameManager : SingletonBehaviour<GameManager> {
 
     public override void Awake() {
         base.Awake();
-        Debug.Log(PrefabRegistry.Instance);
         if (!ApplicationManager.NewGame)
             GameData.Load();
     }

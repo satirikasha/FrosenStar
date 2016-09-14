@@ -5,7 +5,7 @@ using System;
 [CreateAssetMenu(fileName = "Ship.asset", menuName = "Inventory System/Ship", order = 0)]
 public class ShipItemTemplate : InventoryItemTemplate<ShipItem>{
     [Header("Ship")]
-    public ShipController ShipPrefab;
+    public GameObject ShipPrefab;
     public float Health;
     public float Energy;
     public float Mass;
@@ -23,15 +23,14 @@ public class ShipItemTemplate : InventoryItemTemplate<ShipItem>{
 
 [Serializable]
 public class ShipItem : InventoryItem {
-    public ShipController ShipPrefab;
+    public GameObject ShipPrefab;
     public float Health;
     public float Energy;
     public float Mass;
     public float Handling;
 
     public ShipController Instantiate() {
-        Debug.Log(ShipPrefab.GetInstanceID());
-        var ship = GameObject.Instantiate<ShipController>(ShipPrefab);
+        var ship = GameObject.Instantiate(ShipPrefab).GetComponent<ShipController>();
         ship.Item = this;
         return ship;
     }

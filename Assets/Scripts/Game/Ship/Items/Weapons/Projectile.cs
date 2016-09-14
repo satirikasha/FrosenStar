@@ -8,7 +8,6 @@ public class Projectile : MonoBehaviour {
     [Interval(0, 10)]
     public Vector2 LifespanRange = new Vector2(0.5f, 1.5f);
     
-
     public float InheritedSpeed { get; set; }
 
     public float Lifespan { get; private set; }

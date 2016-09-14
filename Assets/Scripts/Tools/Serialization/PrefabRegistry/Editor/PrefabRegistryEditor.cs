@@ -37,9 +37,10 @@ public class PrefabRegistryEditor : Editor {
 
     public override void OnInspectorGUI() {
         serializedObject.Update();
-        GUI.enabled = false;
         list.DoLayoutList();
-        GUI.enabled = true;
+        if (GUILayout.Button("Refresh")) {
+            ((PrefabRegistry)target).RefreshRegistry();
+        }
         serializedObject.ApplyModifiedProperties();
     }
 }
