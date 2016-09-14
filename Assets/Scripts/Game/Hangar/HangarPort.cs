@@ -7,7 +7,13 @@ public class HangarPort : MonoBehaviour {
     [HangarName]
     public string HangarName;
 
+    public PlayerStart PlayerStart { get; private set; }
+
     private Coroutine _PortActivation;
+
+    private void Awake() {
+        PlayerStart = this.GetComponentInChildren<PlayerStart>();
+    }
 
     public void OnTriggerEnter(Collider other) {
         if(other.attachedRigidbody.transform == PlayerController.LocalPlayer.transform) {
@@ -23,6 +29,6 @@ public class HangarPort : MonoBehaviour {
 
     private IEnumerator ActivatePort() {
         yield return new WaitForSeconds(3);
-        ApplicationManager.EnterHangar(HangarName);
+        ApplicationManager.EnterHangar(this);
     }
 }

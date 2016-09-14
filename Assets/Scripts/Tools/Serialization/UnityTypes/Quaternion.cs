@@ -15,10 +15,10 @@ namespace Tools.Serialization {
         }
 
         public override Quaternion SetObjectData(Quaternion obj, SerializationInfo info, StreamingContext context, ISurrogateSelector selector) {
-            obj.x = (float)info.GetValue("x", typeof(float));
-            obj.y = (float)info.GetValue("y", typeof(float));
-            obj.z = (float)info.GetValue("z", typeof(float));
-            obj.w = (float)info.GetValue("w", typeof(float));
+            obj.x = info.GetFloat("x");
+            obj.y = info.GetFloat("y");
+            obj.z = info.GetFloat("z");
+            obj.w = info.GetFloat("w");
             return obj;
         }
     }

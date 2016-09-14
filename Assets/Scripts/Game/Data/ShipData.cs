@@ -5,23 +5,24 @@ using System;
 [Serializable]
 public class ShipData : IData {
 
+    public ShipItem ShipItem;
     public Vector3 Position;
     public Quaternion Rotation;
     public float Health;
     public float Energy;
 
     public void GatherData() {
-        Position = PlayerController.LocalPlayer.Ship.transform.position;
-        Rotation = PlayerController.LocalPlayer.Ship.transform.rotation;
+        ShipItem = PlayerController.LocalPlayer.Ship.Item;
         Health = PlayerController.LocalPlayer.Ship.Health;
         Energy = PlayerController.LocalPlayer.Ship.Energy;
-        Debug.Log(Energy);
+        Debug.Log(Position);
     }
 
     public void ScatterData() {
-        PlayerController.LocalPlayer.Ship.transform.position = Position;
-        PlayerController.LocalPlayer.Ship.transform.rotation = Rotation;
-        PlayerController.LocalPlayer.Ship.SetHealth(Health);
-        PlayerController.LocalPlayer.Ship.SetEnergy(Energy);
+        var ship = ShipItem.Instantiate();
+        ship.transform.position = Position;
+        ship.transform.rotation = Rotation;
+        ship.SetHealth(Health);
+        ship.SetEnergy(Energy);
     }
 }

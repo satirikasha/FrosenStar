@@ -13,7 +13,9 @@ public class GameManager : SingletonBehaviour<GameManager> {
 
     public override void Awake() {
         base.Awake();
-        Application.targetFrameRate = 1000;
+        Debug.Log(PrefabRegistry.Instance);
+        if (!ApplicationManager.NewGame)
+            GameData.Load();
     }
 
     void Update () {

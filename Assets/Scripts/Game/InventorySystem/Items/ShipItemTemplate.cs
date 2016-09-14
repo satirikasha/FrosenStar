@@ -30,6 +30,7 @@ public class ShipItem : InventoryItem {
     public float Handling;
 
     public ShipController Instantiate() {
+        Debug.Log(ShipPrefab.GetInstanceID());
         var ship = GameObject.Instantiate<ShipController>(ShipPrefab);
         ship.Item = this;
         return ship;

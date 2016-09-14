@@ -5,18 +5,27 @@ using System.Linq;
 using System.Collections.Generic;
 using System;
 
-public class ApplicationManager {
+public static class ApplicationManager {
 
     public static bool GameMode {
         get {
-            // TODO: Set up this value when Game scene is loaded
             return SceneManager.GetActiveScene().name == "Game";
         }
     }
 
-    public static void EnterHangar(string name) {
-        SceneManager.LoadScene(name + "Hangar");
+    public static bool NewGame {
+        get {
+            return !GameData.SavedDataExists;
+        }
     }
+
+    public static void EnterHangar(HangarPort port) {
+        GameData.Current.PlayerData.ShipData.Position = port.PlayerStart.transform.position;
+        GameData.Current.PlayerData.ShipData.Rotation = port.PlayerStart.transform.rotation;
+        GameData.Save();
+        SceneManager.LoadScene(port.HangarName + "Hangar");
+    }
+
 
 #if UNITY_EDITOR
     public static List<string> GetHangarNames() {

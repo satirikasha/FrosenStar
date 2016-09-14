@@ -13,8 +13,8 @@ namespace Tools.Serialization {
         }
 
         public override Vector2 SetObjectData(Vector2 obj, SerializationInfo info, StreamingContext context, ISurrogateSelector selector) {
-            obj.x = (float)info.GetValue("x", typeof(float));
-            obj.y = (float)info.GetValue("y", typeof(float));
+            obj.x = info.GetFloat("x");
+            obj.y = info.GetFloat("y");
             return obj;
         }
     }
@@ -29,9 +29,9 @@ namespace Tools.Serialization {
         }
 
         public override Vector3 SetObjectData(Vector3 obj, SerializationInfo info, StreamingContext context, ISurrogateSelector selector) {
-            obj.x = (float)info.GetValue("x", typeof(float));
-            obj.y = (float)info.GetValue("y", typeof(float));
-            obj.z = (float)info.GetValue("z", typeof(float));
+            obj.x = info.GetFloat("x");
+            obj.y = info.GetFloat("y");
+            obj.z = info.GetFloat("z");
             return obj;
         }
     }
@@ -47,10 +47,10 @@ namespace Tools.Serialization {
         }
 
         public override Vector4 SetObjectData(Vector4 obj, SerializationInfo info, StreamingContext context, ISurrogateSelector selector) {
-            obj.x = (float)info.GetValue("x", typeof(float));
-            obj.y = (float)info.GetValue("y", typeof(float));
-            obj.z = (float)info.GetValue("z", typeof(float));
-            obj.w = (float)info.GetValue("w", typeof(float));
+            obj.x = info.GetFloat("x");
+            obj.y = info.GetFloat("y");
+            obj.z = info.GetFloat("z");
+            obj.w = info.GetFloat("w");
             return obj;
         }
     }
