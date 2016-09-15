@@ -18,6 +18,7 @@ public class WeaponItemTemplate : SlotItemTemplate<WeaponItem> {
     }
 }
 
+[Serializable]
 public class WeaponItem : SlotItem {
     public float EnergyConsumption;
     public float Cooldown;

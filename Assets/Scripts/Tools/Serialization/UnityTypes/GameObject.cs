@@ -11,7 +11,7 @@ namespace Tools.Serialization {
 
             int id;
 
-            id = PrefabRegistry.GetPrefabID(obj);
+            id = ObjectRegistry.GetPrefabID(obj);
             if (id != 0) {
                 info.AddValue("id", id); return;
             }
@@ -24,7 +24,7 @@ namespace Tools.Serialization {
 
             GameObject go;
 
-            go = PrefabRegistry.GetPrefab(info.GetInt32("x"));
+            go = ObjectRegistry.GetPrefab(info.GetInt32("id"));
             if(go != null) {
                 return go;
             }

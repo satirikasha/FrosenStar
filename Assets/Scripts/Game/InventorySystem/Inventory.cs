@@ -28,14 +28,22 @@ public class Inventory : MonoBehaviour {
         }
     }
 
+    public static bool RemoveItem(InventoryItem item, Inventory target) {
+        return target.Items.Remove(item);
+    }
+
     public static void TransitItem(InventoryItem item, Inventory from, Inventory to) {
-        if (from.Items.Remove(item)) {
-            to.Items.Add(item);
+        if (RemoveItem(item, from)) {
+            AddItem(item, to);
         }
     }
 
-    public static void TransitAll(Inventory from, Inventory to) {
-        to.Items.AddRange(from.Items);
-        from.Items.Clear();
+    public static void TransitItems(Inventory from, Inventory to) {
+        AddItems(from.Items, to);
+        ClearItems(from);
+    }
+
+    public static void ClearItems(Inventory target) {
+        target.Items.Clear();
     }
 }

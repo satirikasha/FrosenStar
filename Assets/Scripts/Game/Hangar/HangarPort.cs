@@ -16,13 +16,14 @@ public class HangarPort : MonoBehaviour {
     }
 
     public void OnTriggerEnter(Collider other) {
-        if(other.attachedRigidbody.transform == PlayerController.LocalPlayer.transform) {
+        //Debug.Log(Time.timeSinceLevelLoad);
+        if(Time.timeSinceLevelLoad > 1 && other.attachedRigidbody.transform == PlayerController.LocalPlayer.transform) {
             _PortActivation = StartCoroutine(ActivatePort());
         }
     }
 
     public void OnTriggerExit(Collider other) {
-        if (other.attachedRigidbody.transform == PlayerController.LocalPlayer.transform) {
+        if (other.attachedRigidbody.transform == PlayerController.LocalPlayer.transform && _PortActivation != null) {
             StopCoroutine(_PortActivation);
         }
     }

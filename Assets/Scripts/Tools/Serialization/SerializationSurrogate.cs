@@ -54,6 +54,10 @@ namespace Tools.Serialization {
                 .SelectMany(t => t.GetTypes())
                 .Where(t => t.IsClass && !t.IsGenericType && t.IsSubclassOf(typeof(SerializationSurrogate)));
 
+            //foreach (var item in surrogateTypes) {
+            //    Debug.Log(item.Name);
+            //}
+
             var surrogateInstances = surrogateTypes
                 .Select(_ => Activator.CreateInstance(_))
                 .OfType<SerializationSurrogate>();

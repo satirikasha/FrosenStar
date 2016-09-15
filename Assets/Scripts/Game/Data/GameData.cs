@@ -48,10 +48,8 @@ public class GameData: IData {
         if (_Current == null)
             _Current = new GameData();
         _Current.GatherData();
-
         var bf = new BinaryFormatter();
         bf.SurrogateSelector = SerializationSurrogate.SurrogateSelector;
-
         using (var fs = File.Open(DataPath, FileMode.OpenOrCreate)) {
             bf.Serialize(fs, _Current);
             fs.Close();
@@ -61,10 +59,8 @@ public class GameData: IData {
     public static void Load() {
         Debug.Log("Load");
         if (SavedDataExists) {
-
             var bf = new BinaryFormatter();
             bf.SurrogateSelector = SerializationSurrogate.SurrogateSelector;
-
             using (var fs = File.Open(DataPath, FileMode.Open)) {
                 _Current = (GameData)bf.Deserialize(fs);
                 fs.Close();

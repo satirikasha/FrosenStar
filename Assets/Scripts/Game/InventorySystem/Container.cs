@@ -14,7 +14,7 @@ public class Container : Inventory {
     public void OnTriggerEnter(Collider other) {
         var player = other.GetComponentInParent<PlayerController>();
         if(player != null) {
-            TransitAll(this, player.GetComponent<Inventory>());
+            TransitItems(this, player.GetComponent<Inventory>());
             Destroy(this.gameObject);
         }
     }
