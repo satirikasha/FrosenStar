@@ -11,7 +11,7 @@ public class Inventory : MonoBehaviour {
             return _Items;
         }
     }
-    [SerializeField] //Debug
+    [SerializeField]
     private List<InventoryItem> _Items;
 
     public static void AddItem(InventoryItem item, Inventory target) {

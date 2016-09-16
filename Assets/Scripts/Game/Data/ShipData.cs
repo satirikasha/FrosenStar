@@ -17,9 +17,9 @@ public class ShipData : IData {
     }
 
     public void ScatterData() {
-        var ship = ShipItem.Instantiate();
-        ship.transform.position = Position;
-        ship.transform.rotation = Rotation;
+        //var ship = ShipItem.Instantiate();
+        //PlayerController.LocalPlayer.Ship.transform.position = Position;
+        //PlayerController.LocalPlayer.Ship.transform.rotation = Rotation;
         InventoryData.ScatterData();
     }
 }

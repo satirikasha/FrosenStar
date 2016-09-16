@@ -6,6 +6,6 @@ public class DefaultPlayerStart : PlayerStart {
 
     void Awake() {
         if (ApplicationManager.NewGame)
-            SpawnPlayer(DefaultShip.GenerateItem() as ShipItem);
+            SpawnShip(DefaultShip.GenerateItem() as ShipItem);
     }
 }

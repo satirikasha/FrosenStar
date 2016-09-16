@@ -2,16 +2,28 @@
 using System.Collections;
 using System;
 using System.Linq;
+using System.Collections.Generic;
 
 public class PlayerStart : MonoBehaviour {
 
     [ReadOnly]
     public string ID;
 
-    public void SpawnPlayer(ShipItem ship) {
+    private static List<PlayerStart> _Instances = new List<PlayerStart>();
+
+    void Awake() {
+        _Instances.Add(this);
+    }
+
+    void OnDestroy() {
+        _Instances.Remove(this);
+    }
+
+    public void SpawnShip(ShipItem ship) {
         var go = ship.Instantiate();
         go.transform.position = this.transform.position;
         go.transform.rotation = this.transform.rotation;
+        go.transform.localScale = this.transform.localScale;
     }
 
     public void OnValidate() {
@@ -19,6 +31,10 @@ public class PlayerStart : MonoBehaviour {
         //if(String.IsNullOrEmpty(ID) || starts.Any(_ => _ != this && _.ID == ID)) {
         //    ID = Guid.NewGuid().ToString().ToUpper();
         //}
+    }
+
+    public static List<PlayerStart> GetAvailable() {
+        return _Instances;
     }
 
 #if UNITY_EDITOR

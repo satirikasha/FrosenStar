@@ -13,7 +13,6 @@ public class InventoryData : IData {
     }
 
     public void ScatterData() {
-        PlayerController.LocalPlayer.Ship.Inventory.Items.Clear();
-        Inventory.AddItems(InventoryItems, PlayerController.LocalPlayer.Ship.Inventory);
+
     }
 }

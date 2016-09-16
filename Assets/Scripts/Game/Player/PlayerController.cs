@@ -24,13 +24,28 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
+    public bool IsLocalPlayer {
+        get {
+            return this == LocalPlayer;
+        }
+    }
+
     void Awake() {
-        LocalPlayer = this;
+        if (this.GetComponent<PlayerController>())
+            LocalPlayer = this;
         Ship = this.GetComponent<ShipController>();
         Inventory = this.GetComponent<Inventory>();
+
+        if (IsLocalPlayer && !ApplicationManager.NewGame)
+            Load();
     }
 
     void Update() {
         SelectedItem = EQS.GetItems(5).OrderBy(_ => Vector3.Dot(-_.Delta.normalized, this.transform.forward)).FirstOrDefault();
+    }
+
+    private void Load() {
+        Inventory.Items.Clear();
+        Inventory.AddItems(GameData.Current.PlayerData.ShipData.InventoryData.InventoryItems, Inventory);
     }
 }
