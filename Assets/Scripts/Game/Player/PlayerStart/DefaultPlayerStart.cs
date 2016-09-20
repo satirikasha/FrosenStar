@@ -2,10 +2,15 @@
 using System.Collections;
 
 public class DefaultPlayerStart : PlayerStart {
-    public ShipItemTemplate DefaultShip;
 
-    void Awake() {
-        if (ApplicationManager.NewGame)
-            SpawnShip(DefaultShip.GenerateItem() as ShipItem);
+    public override void Awake() {
+        //Shouldn't  register in the Instances list
+        _Default = this;
+    }
+
+    public override void OnDestroy() {
+        //Shouldn't  unregister in the Instances list
+        if (_Default == this)
+            _Default = null;
     }
 }

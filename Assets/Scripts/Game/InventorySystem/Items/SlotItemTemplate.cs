@@ -15,8 +15,9 @@ public abstract class SlotItemTemplate<T> : InventoryItemTemplate<T> where T : S
 [Serializable]
 public abstract class SlotItem : InventoryItem {
     public GameObject ItemPrefab;
+    public int EquipedSlotID = -1;
 
-    public abstract bool CheckCompatability(ItemSlot.SlotType type);
+    public abstract bool CheckCompatability(SlotType type);
 
     public ShipPart Instantiate() {
         var item = GameObject.Instantiate(ItemPrefab).GetComponent<ShipPart>();

@@ -6,8 +6,8 @@ public abstract class ToolItemTemplate<T> : SlotItemTemplate<T> where T : ToolIt
 
 [Serializable]
 public abstract class ToolItem : SlotItem {
-    public override bool CheckCompatability(ItemSlot.SlotType type) {
-        return type == ItemSlot.SlotType.Tool;
+    public override bool CheckCompatability(SlotType type) {
+        return type == SlotType.Tool;
     }
 }
 

@@ -19,6 +19,10 @@ public static class ApplicationManager {
         }
     }
 
+    public static void EnterGame() {
+        SceneManager.LoadScene("Game");
+    }
+
     public static void EnterHangar(HangarPort port) {
         GameData.Current.PlayerData.ShipData.Position = port.PlayerStart.transform.position;
         GameData.Current.PlayerData.ShipData.Rotation = port.PlayerStart.transform.rotation;

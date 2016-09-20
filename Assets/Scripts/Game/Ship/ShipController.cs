@@ -126,8 +126,8 @@ public class ShipController : MonoBehaviour, IDamagable {
 
     public void RefreshSlots() {
         ItemSlots = this.GetComponentsInChildren<ItemSlot>().ToList();
-        Weapons = ItemSlots.Select(_ => _.Item).OfType<Weapon>().ToList();
-        Engines = ItemSlots.Select(_ => _.Item).OfType<Engine>().ToList();
+        Weapons = ItemSlots.Select(_ => _.ShipPart).OfType<Weapon>().ToList();
+        Engines = ItemSlots.Select(_ => _.ShipPart).OfType<Engine>().ToList();
     }
 
     public void ApplyCollisionDamage(Collision collision) {

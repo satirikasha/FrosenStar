@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using Tools;
+using System.Linq;
 
 public class GameManager : SingletonBehaviour<GameManager> {
 
@@ -11,10 +12,20 @@ public class GameManager : SingletonBehaviour<GameManager> {
         }
     }
 
-    public override void Awake() {
+    public ShipItemTemplate DefaultShip;
+
+    protected override void Awake() {
         base.Awake();
-        if (!ApplicationManager.NewGame)
+        if (ApplicationManager.NewGame) {
+            var shipItem = (ShipItem)DefaultShip.GenerateItem();
+            PlayerStart.GetDefault().SpawnShip(shipItem);
+        }
+        else {
             GameData.Load();
+            var shipItem = GameData.Current.PlayerData.ShipData.ShipItem;
+            PlayerStart.GetAvailable().First().SpawnShip(shipItem);
+        }
+       
     }
 
     void Update () {

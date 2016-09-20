@@ -9,13 +9,14 @@ public class PlayerStart : MonoBehaviour {
     [ReadOnly]
     public string ID;
 
-    private static List<PlayerStart> _Instances = new List<PlayerStart>();
+    protected static List<PlayerStart> _Instances = new List<PlayerStart>();
+    protected static PlayerStart _Default;
 
-    void Awake() {
+    public virtual void Awake() {
         _Instances.Add(this);
     }
 
-    void OnDestroy() {
+    public virtual void OnDestroy() {
         _Instances.Remove(this);
     }
 
@@ -37,10 +38,14 @@ public class PlayerStart : MonoBehaviour {
         return _Instances;
     }
 
+    public static PlayerStart GetDefault() {
+        return _Default;
+    }
+
 #if UNITY_EDITOR
     void OnDrawGizmos() {
         UnityEditor.Handles.color = Color.yellow;
         UnityEditor.Handles.ArrowCap(-1, this.transform.position, this.transform.rotation, UnityEditor.HandleUtility.GetHandleSize(this.transform.position) * 1.25f);
     }
-}
 #endif
+}

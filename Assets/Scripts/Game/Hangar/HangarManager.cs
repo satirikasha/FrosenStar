@@ -12,4 +12,8 @@ public class HangarManager : MonoBehaviour {
     void Update() {
 
     }
+
+    public void Back() {
+        ApplicationManager.EnterGame();
+    }
 }

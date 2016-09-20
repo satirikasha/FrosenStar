@@ -22,15 +22,15 @@ namespace Tools {
         }
         private static T _Instance;
 
-        public virtual void Awake() {
+        protected virtual void Awake() {
             Register();
         }
 
-        public virtual void OnEnable() {
+        protected virtual void OnEnable() {
             Register();
         }
 
-        public virtual void OnDestroy() {
+        protected virtual void OnDestroy() {
             Unregister();
         }
 

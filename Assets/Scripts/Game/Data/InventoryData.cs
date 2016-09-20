@@ -12,7 +12,5 @@ public class InventoryData : IData {
         InventoryItems = PlayerController.LocalPlayer.Ship.Inventory.Items;
     }
 
-    public void ScatterData() {
-
-    }
+    public void ScatterData() { }
 }

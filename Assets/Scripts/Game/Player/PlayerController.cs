@@ -1,11 +1,19 @@
 ﻿using UnityEngine;
 using System.Collections;
+using Tools;
 using Tools.EQS;
 using System.Linq;
 
-public class PlayerController : MonoBehaviour {
+/// <summary>
+/// This class represents a player, who owns a ship
+/// </summary>
+public class PlayerController : SingletonBehaviour<PlayerController> {
 
-    public static PlayerController LocalPlayer { get; private set; }
+    public static PlayerController LocalPlayer {
+        get {
+            return Instance;
+        }
+    }
 
     public EQSItem SelectedItem;
 
@@ -24,28 +32,40 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
-    public bool IsLocalPlayer {
-        get {
-            return this == LocalPlayer;
-        }
-    }
-
-    void Awake() {
-        if (this.GetComponent<PlayerController>())
-            LocalPlayer = this;
+    protected override void Awake() {
         Ship = this.GetComponent<ShipController>();
         Inventory = this.GetComponent<Inventory>();
+    }
 
-        if (IsLocalPlayer && !ApplicationManager.NewGame)
+    void Start() {
+        if (ApplicationManager.NewGame) {
+            Construct();
+        }
+        else {
             Load();
+        }
     }
 
     void Update() {
         SelectedItem = EQS.GetItems(5).OrderBy(_ => Vector3.Dot(-_.Delta.normalized, this.transform.forward)).FirstOrDefault();
     }
 
+    private void Construct() {
+        Ship.RefreshSlots();
+        Ship.ItemSlots.ForEach(_ => _.Construct());
+    }
+
     private void Load() {
+        Ship.RefreshSlots();
         Inventory.Items.Clear();
-        Inventory.AddItems(GameData.Current.PlayerData.ShipData.InventoryData.InventoryItems, Inventory);
+        Inventory.AddItems(GameData.Current.PlayerData.InventoryData.InventoryItems, Inventory);
+        Inventory.Items.OfType<SlotItem>().ForEach(_ => {
+            if (_.EquipedSlotID >= 0) {
+                var slot = Ship.ItemSlots.FirstOrDefault(s => s.ID == _.EquipedSlotID);
+                if(slot != null) {
+                    slot.Equip(_);
+                }
+            }
+        });
     }
 }
