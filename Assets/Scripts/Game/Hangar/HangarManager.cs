@@ -13,7 +13,7 @@ public class HangarManager : MonoBehaviour {
 
     }
 
-    public void Back() {
+    public void LeaveHangar() {
         ApplicationManager.EnterGame();
     }
 }
