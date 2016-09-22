@@ -33,11 +33,10 @@ public class PlayerController : SingletonBehaviour<PlayerController> {
     }
 
     protected override void Awake() {
+        base.Awake();
         Ship = this.GetComponent<ShipController>();
         Inventory = this.GetComponent<Inventory>();
-    }
 
-    void Start() {
         if (ApplicationManager.NewGame) {
             Construct();
         }

@@ -15,16 +15,12 @@ public class Inventory : MonoBehaviour {
     private List<InventoryItem> _Items;
 
     public static void AddItem(InventoryItem item, Inventory target) {
-        if (item != null && target != null) {
-            target.Items.Add(item);
-        }
+        target.Items.Add(item);
     }
 
     public static void AddItems(IEnumerable<InventoryItem> items, Inventory target) {
-        if (target != null) {
-            foreach (var item in items) {
-                AddItem(item, target);
-            }
+        foreach (var item in items) {
+            AddItem(item, target);
         }
     }
 

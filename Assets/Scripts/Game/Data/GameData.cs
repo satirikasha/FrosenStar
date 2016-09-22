@@ -44,7 +44,6 @@ public class GameData: IData {
     }
 
     public static void Save() {
-        Debug.Log("Save");
         if (_Current == null)
             _Current = new GameData();
         _Current.GatherData();
@@ -57,7 +56,6 @@ public class GameData: IData {
     }
 
     public static void Load() {
-        Debug.Log("Load");
         if (SavedDataExists) {
             var bf = new BinaryFormatter();
             bf.SurrogateSelector = SerializationSurrogate.SurrogateSelector;

@@ -31,8 +31,8 @@ public class ItemSlot : MonoBehaviour {
 
     public void Construct() {
         if (DefaultItem != null) {
+            Ship.Initialize();
             var item = DefaultItem.GenerateItem() as SlotItem;
-            Debug.Log(Ship.Inventory);
             Inventory.AddItem(item, Ship.Inventory);
             Equip(item);
         }
@@ -56,5 +56,5 @@ public enum SlotType {
     Tool,
     Weapon,
     Engine,
-    Cargo
+    Container
 }

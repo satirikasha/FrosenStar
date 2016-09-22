@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Tools.Damage;
 
-public class ShipController : MonoBehaviour, IDamagable {
+public class ShipController : InitializedBehaviour, IDamagable {
 
     private const float BodyRollCoeff = 0.5f;
     private const float CollisionDamageCoeff = 0.2f;
@@ -54,8 +54,7 @@ public class ShipController : MonoBehaviour, IDamagable {
 
 
     void Awake() {
-        Rigidbody = this.GetComponent<Rigidbody>();
-        Inventory = this.GetComponent<Inventory>();
+        Init();
     }
 
     void Start() {
@@ -83,6 +82,11 @@ public class ShipController : MonoBehaviour, IDamagable {
 
     public void OnCollisionStay(Collision collision) {
         ApplyCollisionDamage(collision);
+    }
+
+    protected override void Init() {
+        Rigidbody = this.GetComponent<Rigidbody>();
+        Inventory = this.GetComponent<Inventory>();
     }
 
     private void UpdateEngines() {

@@ -4,7 +4,7 @@ using System.Linq;
 
 public class HangarManager : MonoBehaviour {
 
-    void Start() {
+    void Awake() {
         var shipItem = GameData.Current.PlayerData.ShipData.ShipItem;
         PlayerStart.GetAvailable().First().SpawnShip(shipItem);
     }
