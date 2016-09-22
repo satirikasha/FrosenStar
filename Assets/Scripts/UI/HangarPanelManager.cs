@@ -10,6 +10,8 @@ public class HangarPanelManager : MonoBehaviour {
     void Awake() {
         Panels = this.GetComponentsInChildren<HangarPanel>(true).ToList();
         Panels.First().Stack = PanelStack.Current;
+        Debug.Log(Panels.Count);
+        Panels.ForEach(_ => _.gameObject.SetActive(true));
     }
 
     public void MoveToPanel(string name) {
