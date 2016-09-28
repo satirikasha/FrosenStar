@@ -29,11 +29,8 @@ public class HangarPanel : MonoBehaviour {
 
     private bool _Initialized = false;
 
-    void Awake() {
-        OnStackChanged();
-    }
-
     void Start() {
+        OnStackChanged();
         RefreshValues(1);
     }
 

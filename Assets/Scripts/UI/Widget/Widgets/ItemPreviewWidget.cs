@@ -4,6 +4,8 @@ using UnityEngine.UI;
 
 public class ItemPreviewWidget : UIWidget {
 
+    public RectTransform RectTransform { get; private set; }
+
     public RawImage Icon;
     public Text Name;
 
@@ -14,6 +16,7 @@ public class ItemPreviewWidget : UIWidget {
         widget._Item = item;
         widget.Icon.texture = item.Preview;
         widget.Name.text = item.Name;
+        widget.RectTransform = (RectTransform)widget.transform;
         widget.transform.SetParent(host, false);
         return widget;
     }

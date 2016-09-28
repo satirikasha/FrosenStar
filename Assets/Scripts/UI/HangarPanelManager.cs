@@ -7,7 +7,7 @@ public class HangarPanelManager : MonoBehaviour {
 
     private List<HangarPanel> Panels;
 
-    void Awake() {
+    void Start() {
         Panels = this.GetComponentsInChildren<HangarPanel>(true).ToList();
         Panels.First().Stack = PanelStack.Current;
         Panels.ForEach(_ => _.gameObject.SetActive(true));
