@@ -15,7 +15,7 @@ public class InventoryWidget : MonoBehaviour, IBeginDragHandler, IEndDragHandler
     [ReadOnly("UseSlotFilter", false)]
     public bool CargoOnly;
 
-    public float ScrollRectDamping = 5;
+    public float ScrollRectDamping = 15;
 
     private ScrollRect _ScrollRect;
     private List<ItemPreviewWidget> _Previews;
@@ -37,12 +37,30 @@ public class InventoryWidget : MonoBehaviour, IBeginDragHandler, IEndDragHandler
     }
 
     void UpdateScrollRect() {
-        var widget = _Previews.FirstOrDefault(_ => _.gameObject == EventSystem.current.currentSelectedGameObject);
-        var source = _ScrollRect.verticalNormalizedPosition * _ScrollRect.
-        var target = _ScrollRect.verticalNormalizedPosition 
+        var widget = _Previews.FirstOrDefault(_ => _.gameObject == EventSystem.current.currentSelectedGameObject).RectTransform;
+        var scroll = _ScrollRect.viewport;
+        var target = _ScrollRect.verticalNormalizedPosition;
+
         if (widget != null) {
-            var dTop = widget.RectTransform.rect.yMax - _ScrollRect.viewport.rect.yMax;
-            if (dTop > 0)
+            var widgetCorners = new Vector3[4];
+            var scrollCorners = new Vector3[4];
+            widget.GetWorldCorners(widgetCorners);
+            scroll.GetWorldCorners(scrollCorners);
+            var widgetMax = widget.TransformPoint(0,widget.rect.yMax,0).y;
+            var scrollMax = scrollCorners.Max(_ => _.y);
+            var widgetMin = widgetCorners.Min(_ => _.y);
+            var scrollMin = scrollCorners.Min(_ => _.y);
+            var dMax = widgetMax - scrollMax;
+            var dMin = widgetMin - scrollMin;
+            if (dMax > 0) {
+                target += (_ScrollRect.content.InverseTransformVector(Vector3.up * dMax).y) / _ScrollRect.content.rect.height;
+            }
+            if (dMin < 0) {
+                target += (_ScrollRect.content.InverseTransformVector(Vector3.up * dMin).y) / _ScrollRect.content.rect.height;
+            }
+
+            _ScrollRect.verticalNormalizedPosition = Mathf.Lerp(_ScrollRect.verticalNormalizedPosition, target, ScrollRectDamping * Time.unscaledDeltaTime);
+            Debug.Log(_ScrollRect.verticalNormalizedPosition);
         }
     }
 
@@ -51,7 +69,7 @@ public class InventoryWidget : MonoBehaviour, IBeginDragHandler, IEndDragHandler
     }
 
     public void Refresh() {
-        if(_Previews != null) {
+        if (_Previews != null) {
             _Previews.ForEach(_ => Destroy(_.gameObject));
         }
         _Previews = new List<ItemPreviewWidget>();
