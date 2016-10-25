@@ -1,4 +1,6 @@
-﻿Shader "Enviroment/Nebula"
+﻿// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
+
+Shader "Enviroment/Nebula"
 {
 	Properties
 	{
@@ -61,7 +63,7 @@
 			{
 				v2f o;
 				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
-				o.uv = mul(_Object2World, v.vertex).xz;
+				o.uv = mul(unity_ObjectToWorld, v.vertex).xz;
 				o.viewDir = UNITY_MATRIX_IT_MV[2].xyz;
 				return o;
 			}
