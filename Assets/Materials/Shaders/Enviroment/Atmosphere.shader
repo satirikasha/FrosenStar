@@ -1,4 +1,7 @@
-﻿Shader "Enviroment/Atmosphere"
+﻿// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
+// Upgrade NOTE: replaced '_World2Object' with 'unity_WorldToObject'
+
+Shader "Enviroment/Atmosphere"
 {
 	Properties
 	{
@@ -50,8 +53,8 @@
 			v2f vert (appdata v)
 			{
 				v2f o;
-				o.position = mul(_Object2World, v.vertex);
-				o.normal = normalize(mul(float4(v.normal, 0), _World2Object).xyz);
+				o.position = mul(unity_ObjectToWorld, v.vertex);
+				o.normal = normalize(mul(float4(v.normal, 0), unity_WorldToObject).xyz);
 				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
 
 				return o;
@@ -119,8 +122,8 @@
 				v2f vert(appdata v)
 				{
 					v2f o;
-					o.position = mul(_Object2World, v.vertex);
-					o.normal = normalize(mul(float4(v.normal, 0), _World2Object).xyz);
+					o.position = mul(unity_ObjectToWorld, v.vertex);
+					o.normal = normalize(mul(float4(v.normal, 0), unity_WorldToObject).xyz);
 					o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
 
 					return o;
