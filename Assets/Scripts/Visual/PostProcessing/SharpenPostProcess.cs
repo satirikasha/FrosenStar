@@ -5,15 +5,12 @@ using UnityEngine;
 
 namespace UnityStandardAssets.ImageEffects {
     [ExecuteInEditMode]
-    public class BlurPostProcess : PostProcessBase {
+    public class SharpenPostProcess : PostProcessBase {
 
         [Range(0, 1)]
         public float Intensity;
 
-        private const int MaxRadius = 30;
-        private const float MaxDownsample = 0.15f;
-        // Debug: Remove downsampling
-        //private const float MaxDownsample = 1f;
+        private const int MaxRadius = 10;
 
         private Dictionary<int, Kernel> _KernelCache = new Dictionary<int, Kernel>();
 
@@ -23,18 +20,21 @@ namespace UnityStandardAssets.ImageEffects {
                 Graphics.Blit(source, destination);
                 return;
             }
-            var downsample = MaxDownsample + (1 - MaxDownsample) * (1 - Intensity) * (1 - Intensity);
-            //var rt = RenderTexture.GetTemporary(source.width, source.height, 0, source.format);
-            var rt1 = RenderTexture.GetTemporary((int)(source.width * downsample), (int)(source.height * downsample), 0, source.format);
-            var rt2 = RenderTexture.GetTemporary((int)(source.width * downsample), (int)(source.height * downsample), 0, source.format);
+
+            var rt1 = RenderTexture.GetTemporary(source.width, source.height, 0, source.format);
+            var rt2 = RenderTexture.GetTemporary(source.width, source.height, 0, source.format);
+
             var kernel = GetKernel(radius);
+
+            material.SetTexture("_SourceTex", source);
             material.SetInt("_Iterations", kernel.Iterations);
             material.SetFloatArray("_Weight", kernel.Weights);
             material.SetFloatArray("_Offset", kernel.Offsets);
-            Graphics.Blit(source, rt1);
-            Graphics.Blit(rt1, rt2, material, 0);
-            Graphics.Blit(rt2, rt1, material, 1);
-            Graphics.Blit(rt1, destination);
+
+            Graphics.Blit(source, rt1, material, 1);
+            Graphics.Blit(rt1, rt2, material, 2);
+            Graphics.Blit(rt2, destination, material, 0);
+
             RenderTexture.ReleaseTemporary(rt1);
             RenderTexture.ReleaseTemporary(rt2);
         }

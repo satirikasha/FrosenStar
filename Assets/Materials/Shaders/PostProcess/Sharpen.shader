@@ -1,4 +1,4 @@
-﻿Shader "Hidden/PostProcess/GaussianBlur"
+﻿Shader "Hidden/PostProcess/Sharpen"
 {
 	Properties
 	{
@@ -8,6 +8,44 @@
 	{
 		Tags { "RenderType"="Opaque" }
 		LOD 100
+
+        Pass
+        {
+            CGPROGRAM
+            #pragma vertex vert
+            #pragma fragment frag
+
+            #include "UnityCG.cginc"
+
+            sampler2D _MainTex;
+            sampler2D _SourceTex;
+
+            struct appdata {
+                float4 vertex : POSITION;
+                float2 uv : TEXCOORD0;
+            };
+
+            struct v2f {
+                float2 uv : TEXCOORD0;
+                float4 vertex : SV_POSITION;
+            };
+
+            v2f vert (appdata v) {
+                v2f o;
+                o.vertex = mul (UNITY_MATRIX_MVP, v.vertex);
+                o.uv = v.uv;
+                return o;
+            }
+
+            fixed4 frag (v2f i) : SV_Target
+            {
+                fixed4 source = tex2D (_SourceTex, i.uv);
+                fixed4 edge = Luminance (source - tex2D (_MainTex, i.uv)); //abs(Luminance(tex2D(_MainTex, i.uv)) - Luminance(source));
+                //return edge;
+                return source * (1 + edge);
+            }
+            ENDCG
+        }
 
 		Pass
 		{
