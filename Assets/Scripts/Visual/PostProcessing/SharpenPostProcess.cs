@@ -7,15 +7,16 @@ namespace UnityStandardAssets.ImageEffects {
     [ExecuteInEditMode]
     public class SharpenPostProcess : PostProcessBase {
 
-        [Range(0, 1)]
-        public float Intensity;
-
+        [Range(0, 10)]
+        public int Radius;
+        [Range(1, 10)]
+        public float Sharpness;
         private const int MaxRadius = 10;
 
         private Dictionary<int, Kernel> _KernelCache = new Dictionary<int, Kernel>();
 
         void OnRenderImage(RenderTexture source, RenderTexture destination) {
-            var radius = (int)(MaxRadius * Intensity);
+            var radius = Radius;
             if (radius == 0) {
                 Graphics.Blit(source, destination);
                 return;
@@ -28,6 +29,7 @@ namespace UnityStandardAssets.ImageEffects {
 
             material.SetTexture("_SourceTex", source);
             material.SetInt("_Iterations", kernel.Iterations);
+            material.SetFloat("_Sharpness", Sharpness);
             material.SetFloatArray("_Weight", kernel.Weights);
             material.SetFloatArray("_Offset", kernel.Offsets);
 

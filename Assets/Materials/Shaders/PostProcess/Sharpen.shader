@@ -4,19 +4,20 @@
 	{
 		_MainTex ("Base (RGB)", 2D) = "white" {}
 	}
-	SubShader
+		SubShader
 	{
-		Tags { "RenderType"="Opaque" }
+		Tags { "RenderType" = "Opaque" }
 		LOD 100
 
-        Pass
-        {
-            CGPROGRAM
-            #pragma vertex vert
-            #pragma fragment frag
+		Pass
+		{
+			CGPROGRAM
+			#pragma vertex vert
+			#pragma fragment frag
 
-            #include "UnityCG.cginc"
+			#include "UnityCG.cginc"
 
+			float _Sharpness;
             sampler2D _MainTex;
             sampler2D _SourceTex;
 
@@ -41,8 +42,10 @@
             {
                 fixed4 source = tex2D (_SourceTex, i.uv);
                 fixed4 edge = Luminance (source - tex2D (_MainTex, i.uv)); //abs(Luminance(tex2D(_MainTex, i.uv)) - Luminance(source));
-                //return edge;
-                return source * (1 + edge);
+				edge = tan(edge) * _Sharpness;
+				edge = edge + 1;
+                //return edge - 0.5;
+				return source * edge;
             }
             ENDCG
         }
