@@ -13,7 +13,7 @@ public class Engine : ShipPart {
 
         if (Ship.ConsumeEnergy(Mathf.Abs(throttle) * deltaTime * EnergyConsumption)) {
             // WARNING: Forward vector depends on a model (in this case "-this.transform.right")
-            rigidbody.AddForceAtPosition(-this.transform.right * throttle * Thrust, this.transform.position);
+            rigidbody.AddForceAtPosition(this.transform.forward * throttle * Thrust, this.transform.position);
         }
     }
 }
