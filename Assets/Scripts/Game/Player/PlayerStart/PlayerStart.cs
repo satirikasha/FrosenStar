@@ -23,11 +23,11 @@ public class PlayerStart : MonoBehaviour {
     public void SpawnShip(ShipItem ship) {
         var go = ship.Instantiate();
         go.transform.position = this.transform.position;
-        go.transform.rotation = this.transform.rotation;
-        go.transform.localScale = this.transform.localScale;
+        go.transform.rotation = this.transform.rotation;    
     }
 
     public void OnValidate() {
+        this.transform.position = Vector3.Scale(this.transform.position, new Vector3(1, 0, 1));
         //var starts = GameObject.FindObjectsOfType<PlayerStart>();
         //if(String.IsNullOrEmpty(ID) || starts.Any(_ => _ != this && _.ID == ID)) {
         //    ID = Guid.NewGuid().ToString().ToUpper();

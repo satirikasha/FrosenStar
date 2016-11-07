@@ -3,7 +3,6 @@ using System.Collections;
 using System.Linq;
 
 public class CameraArm : MonoBehaviour {
-
     public float FocusRadius = 5;
     [Space]
     public float Height = 10;
