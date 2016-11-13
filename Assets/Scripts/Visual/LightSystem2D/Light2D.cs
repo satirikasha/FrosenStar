@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class Light2D : MonoBehaviour {
     public float Radius = 25;
+    public Color Color = Color.yellow;
+    [Range(0,1)]
+    public float Intesity = 0.5f;
     public int Resolution = 128;
     private Camera[] _Cameras = new Camera[4];
     private LightShaftMesh[] _LightShaftMeshes = new LightShaftMesh[4];
@@ -61,8 +64,9 @@ public class Light2D : MonoBehaviour {
             go.transform.SetParent(this.transform);
             var meshRenderer = go.GetComponent<MeshRenderer>();
             var meshFilter = go.GetComponent<MeshFilter>();
-            var material = new Material(Shader.Find("Unlit/Texture"));
-            material.SetTexture("_MainTex", _RT[i]);
+            var material = new Material(Shader.Find("Unlit/LightShaftSampler"));
+            material.SetTexture("_DepthTex", _RT[i]);
+            material.SetColor("_Color", new Color(Color.r, Color.g, Color.b, Intesity));
             meshRenderer.material = material;
             meshFilter.sharedMesh = mesh;
             _LightShaftMeshes[i] = go.GetComponent<LightShaftMesh>();
@@ -91,6 +95,7 @@ public class Light2D : MonoBehaviour {
     }
 
     private void Render() {
+        Shader.SetGlobalFloat("_Current2DLightRadius", Radius);
         for (int i = 0; i < 4; i++) {
             if (_LightShaftMeshes[i].Visible)
                 _Cameras[i].Render();

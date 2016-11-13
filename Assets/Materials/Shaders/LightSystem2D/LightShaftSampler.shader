@@ -2,20 +2,21 @@
 {
 	Properties
 	{
-		_MainTex ("Texture", 2D) = "white" {}
+        _Color ("Light Color", Color) = (1,1,1,1)
+		_DepthTex ("Depth Texture", 2D) = "black" {}
 	}
 	SubShader
 	{
-		Tags { "RenderType"="Opaque" }
-		LOD 100
+        Tags { "Queue" = "Geometry-1" "IgnoreProjector" = "True" "RenderType" = "Transparent" }
+		ZWrite Off
+        ZTest Off
+        Blend SrcAlpha One
 
 		Pass
 		{
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
-			// make fog work
-			#pragma multi_compile_fog
 			
 			#include "UnityCG.cginc"
 
@@ -27,30 +28,34 @@
 
 			struct v2f
 			{
-				float2 uv : TEXCOORD0;
-				UNITY_FOG_COORDS(1)
+				//float2 uv : TEXCOORD0;
 				float4 vertex : SV_POSITION;
+                float3 localPos : TEXCOORD1;
 			};
 
-			sampler2D _MainTex;
-			float4 _MainTex_ST;
+            float4 _Color;
+			sampler2D _DepthTex;
 			
 			v2f vert (appdata v)
 			{
 				v2f o;
-				o.vertex = UnityObjectToClipPos(v.vertex);
-				o.uv = TRANSFORM_TEX(v.uv, _MainTex);
-				UNITY_TRANSFER_FOG(o,o.vertex);
+				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
+				//o.uv = v.uv;
+                o.localPos = v.vertex;
 				return o;
 			}
 			
 			fixed4 frag (v2f i) : SV_Target
 			{
-				// sample the texture
-				fixed4 col = tex2D(_MainTex, i.uv);
-				// apply fog
-				UNITY_APPLY_FOG(i.fogCoord, col);
-				return col;
+                float dist = distance (0, i.localPos);
+                float falloff = 1 - dist;
+				fixed4 depthTex = tex2D(_DepthTex, (i.localPos.r / i.localPos.b + 1) / 2);
+                float depth = (depthTex.r + depthTex.g + depthTex.b) / 3;
+				//return fixed4(i.uv,0,1);
+                //return depth;
+                //return depthTex;
+                return lerp(falloff * 0.9, falloff, (1 - i.localPos.b) > depth - 0.005) * _Color;
+                //return falloff * _Color;
 			}
 			ENDCG
 		}
