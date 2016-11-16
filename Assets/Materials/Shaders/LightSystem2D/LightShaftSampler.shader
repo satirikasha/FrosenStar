@@ -28,19 +28,19 @@
 
 			struct v2f
 			{
-				//float2 uv : TEXCOORD0;
 				float4 vertex : SV_POSITION;
                 float3 localPos : TEXCOORD1;
 			};
 
             float4 _Color;
+			int _Depth;
 			sampler2D _DepthTex;
+			float4 _DepthTex_TexelSize;
 			
 			v2f vert (appdata v)
 			{
 				v2f o;
 				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
-				//o.uv = v.uv;
                 o.localPos = v.vertex;
 				return o;
 			}
@@ -48,14 +48,17 @@
 			fixed4 frag (v2f i) : SV_Target
 			{
                 float dist = distance (0, i.localPos);
-                float falloff = 1 - dist;
-				fixed4 depthTex = tex2D(_DepthTex, (i.localPos.r / i.localPos.b + 1) / 2);
-                float depth = (depthTex.r + depthTex.g + depthTex.b) / 3;
-				//return fixed4(i.uv,0,1);
-                //return depth;
-                //return depthTex;
-                return lerp(falloff * 0.9, falloff, (1 - i.localPos.b) > depth - 0.005) * _Color;
-                //return falloff * _Color;
+                float falloff = (1 - dist) * (1 - dist);
+				float shadowCoeff = 0.25;
+				float lightMask = 0;
+				for (int c = 0; c < _Depth; c++) {
+					fixed4 depthTex = tex2D(_DepthTex, float2((i.localPos.r / i.localPos.b + 1) / 2, _DepthTex_TexelSize.y * c));
+					float depth = (depthTex.r + depthTex.g + depthTex.b) / 3;
+					lightMask += lerp(falloff * shadowCoeff, falloff, (1 - i.localPos.b) > depth - 0.005);
+				}
+				lightMask /= _Depth;
+
+                return  lightMask * _Color;
 			}
 			ENDCG
 		}

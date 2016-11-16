@@ -5,8 +5,10 @@ using UnityEngine;
 public class Light2D : MonoBehaviour {
     public float Radius = 25;
     public Color Color = Color.yellow;
-    [Range(0,1)]
+    [Range(0, 1)]
     public float Intesity = 0.5f;
+    [Range(1, 25)]
+    public int Depth = 3;
     public int Resolution = 128;
     private Camera[] _Cameras = new Camera[4];
     private LightShaftMesh[] _LightShaftMeshes = new LightShaftMesh[4];
@@ -67,6 +69,7 @@ public class Light2D : MonoBehaviour {
             var material = new Material(Shader.Find("Unlit/LightShaftSampler"));
             material.SetTexture("_DepthTex", _RT[i]);
             material.SetColor("_Color", new Color(Color.r, Color.g, Color.b, Intesity));
+            material.SetInt("_Depth", Depth);
             meshRenderer.material = material;
             meshFilter.sharedMesh = mesh;
             _LightShaftMeshes[i] = go.GetComponent<LightShaftMesh>();
@@ -75,7 +78,7 @@ public class Light2D : MonoBehaviour {
 
     private void GenerateRT() {
         for (int i = 0; i < 4; i++) {
-            _RT[i] = RenderTexture.GetTemporary(Resolution, 1, 32);
+            _RT[i] = RenderTexture.GetTemporary(Resolution, Depth, 32);
         }
     }
 
@@ -87,7 +90,7 @@ public class Light2D : MonoBehaviour {
 
     private void RefreshFrustrum() {
         var radAngle = 90 * Mathf.Deg2Rad;
-        var radHFOV = 2 * Mathf.Atan(Mathf.Tan(radAngle / 2) / Resolution);
+        var radHFOV = 2 * Mathf.Atan(Mathf.Tan(radAngle / 2) / (Resolution / Depth));
         var fov = Mathf.Rad2Deg * radHFOV;
         for (int i = 0; i < 4; i++) {
             _Cameras[i].fieldOfView = fov;
