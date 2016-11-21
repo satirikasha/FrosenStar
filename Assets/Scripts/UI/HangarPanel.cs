@@ -2,8 +2,12 @@
 using System.Collections;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using System;
 
 public class HangarPanel : MonoBehaviour {
+
+    public event Action OnSelected;
+    public event Action OnDeselected;
 
     public PanelStack Stack {
         get {
@@ -58,9 +62,13 @@ public class HangarPanel : MonoBehaviour {
             if (_DefaultSelectable != null && EventSystem.current.currentSelectedGameObject != _DefaultSelectable.gameObject)
                 EventSystem.current.SetSelectedGameObject(_DefaultSelectable.gameObject);
             _CanvasGroup.interactable = true;
+            if (OnSelected != null)
+                OnSelected();
         }
         else {
             _CanvasGroup.interactable = false;
+            if (OnDeselected != null)
+                OnDeselected();
         }
         switch (Stack) {
             case PanelStack.Next:

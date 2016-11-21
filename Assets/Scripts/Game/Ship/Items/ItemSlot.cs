@@ -53,8 +53,9 @@ public class ItemSlot : MonoBehaviour {
 }
 
 public enum SlotType {
-    Tool,
-    Weapon,
-    Engine,
-    Container
+    None = -1,
+    Tool = 0,
+    Weapon = 1,
+    Engine = 2,
+    Container = 3
 }

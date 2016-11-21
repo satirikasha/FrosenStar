@@ -7,13 +7,19 @@ using UnityEngine.EventSystems;
 using System;
 using Tools;
 
-public class InventoryWidget : MonoBehaviour, IBeginDragHandler, IEndDragHandler {
-
+[Serializable]
+public class InventoryWidgetConfig {
+    public string Name;
     public bool UseSlotFilter;
-    [ReadOnly("UseSlotFilter")]
     public SlotType SlotFilter;
-    [ReadOnly("UseSlotFilter", false)]
     public bool CargoOnly;
+}
+
+public class InventoryWidget : UIWidget, IBeginDragHandler, IEndDragHandler {
+
+    public static SlotType CurrentSlotFilter = SlotType.None;
+
+    public InventoryWidgetConfig Config;
 
     public float ScrollRectDamping = 15;
 
@@ -22,8 +28,11 @@ public class InventoryWidget : MonoBehaviour, IBeginDragHandler, IEndDragHandler
 
     private bool _ControlledByDrag;
 
-    void Awake() {
-        _ScrollRect = this.GetComponent<ScrollRect>();
+    void Start() {
+        _ScrollRect = this.GetComponentInChildren<ScrollRect>();
+        var panel = this.GetComponent<HangarPanel>();
+        panel.OnSelected += () => CurrentSlotFilter = Config.UseSlotFilter ? Config.SlotFilter : SlotType.None;
+        panel.OnDeselected += () => CurrentSlotFilter = SlotType.None;
         Refresh();
     }
 
@@ -36,17 +45,24 @@ public class InventoryWidget : MonoBehaviour, IBeginDragHandler, IEndDragHandler
         }
     }
 
+    public static InventoryWidget Instantiate(InventoryWidgetConfig config) {
+        var go = Instantiate(WidgetResourcesCache.GetWidget<InventoryWidget>());
+        go.Config = config;
+        go.name = config.Name;
+        return go;
+    }
+
     void UpdateScrollRect() {
-        var widget = _Previews.FirstOrDefault(_ => _.gameObject == EventSystem.current.currentSelectedGameObject).RectTransform;
+        var widget = _Previews.FirstOrDefault(_ => _.gameObject == EventSystem.current.currentSelectedGameObject);
         var scroll = _ScrollRect.viewport;
         var target = _ScrollRect.verticalNormalizedPosition;
 
         if (widget != null) {
             var widgetCorners = new Vector3[4];
             var scrollCorners = new Vector3[4];
-            widget.GetWorldCorners(widgetCorners);
+            widget.RectTransform.GetWorldCorners(widgetCorners);
             scroll.GetWorldCorners(scrollCorners);
-            var widgetMax = widget.TransformPoint(0,widget.rect.yMax,0).y;
+            var widgetMax = widget.RectTransform.TransformPoint(0,widget.RectTransform.rect.yMax,0).y;
             var scrollMax = scrollCorners.Max(_ => _.y);
             var widgetMin = widgetCorners.Min(_ => _.y);
             var scrollMin = scrollCorners.Min(_ => _.y);
@@ -60,7 +76,6 @@ public class InventoryWidget : MonoBehaviour, IBeginDragHandler, IEndDragHandler
             }
 
             _ScrollRect.verticalNormalizedPosition = Mathf.Lerp(_ScrollRect.verticalNormalizedPosition, target, ScrollRectDamping * Time.unscaledDeltaTime);
-            Debug.Log(_ScrollRect.verticalNormalizedPosition);
         }
     }
 
@@ -73,12 +88,12 @@ public class InventoryWidget : MonoBehaviour, IBeginDragHandler, IEndDragHandler
             _Previews.ForEach(_ => Destroy(_.gameObject));
         }
         _Previews = new List<ItemPreviewWidget>();
-        if (UseSlotFilter) {
-            var items = PlayerController.LocalPlayer.Inventory.Items.OfType<SlotItem>().Where(_ => _.CheckCompatability(SlotFilter)).ToList();
+        if (Config.UseSlotFilter) {
+            var items = PlayerController.LocalPlayer.Inventory.Items.OfType<SlotItem>().Where(_ => _.CheckCompatability(Config.SlotFilter)).ToList();
             items.ForEach(_ => RegisterPreview(ItemPreviewWidget.Instantiate(_, _ScrollRect.content)));
         }
         else {
-            if (CargoOnly) {
+            if (Config.CargoOnly) {
                 var items = PlayerController.LocalPlayer.Inventory.Items.OfType<GenericItem>().ToList();
                 items.ForEach(_ => RegisterPreview(ItemPreviewWidget.Instantiate(_, _ScrollRect.content)));
             }
