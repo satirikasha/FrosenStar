@@ -9,6 +9,12 @@ public class ShipController : InitializedBehaviour, IDamagable {
     private const float BodyRollCoeff = 0.5f;
     private const float CollisionDamageCoeff = 0.2f;
 
+    public ShipController LocalShip {
+        get {
+            return PlayerController.LocalPlayer.Ship;
+        }
+    }
+
     public Vector3 Velocity {
         get
         {
