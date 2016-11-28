@@ -1,33 +1,29 @@
 ﻿using UnityEngine;
 using System.Collections;
+using Tools;
 
-public class ShipPort : MonoBehaviour {
+public class ShipPort : SingletonBehaviour<ShipPort> {
 
-    [Range(1,100)]
-    public float Sensitivity = 25;
-    public float Damping = 1;
-    public float MaxSpeed = 100; 
+    public float Damping = 0.75f;
 
-    private float _Velocity;
-    private Vector3 _PreviousMousePosition;
-
-	// Use this for initialization
-	void Start () {
-
-	}
+    private ItemSlot _FocusedSlot;
+    private Quaternion _TargetRotation;
 	
-	// Update is called once per frame
+    void Start() {
+    }
+
 	void Update () {
-        _Velocity = Mathf.Lerp(_Velocity, 0, Damping * Time.deltaTime);
-
-        if (Input.GetMouseButton(0)) {
-            _Velocity = -(Input.mousePosition - _PreviousMousePosition).x * Sensitivity;
+        if (_FocusedSlot != null) {
+            ShipController.LocalShip.Rigidbody.rotation = Quaternion.Lerp(ShipController.LocalShip.Rigidbody.rotation, _TargetRotation, Damping * Time.deltaTime);
         }
+    }
 
-        _Velocity = Mathf.Clamp(_Velocity, -MaxSpeed, MaxSpeed);
-
-        PlayerController.LocalPlayer.Ship.Rigidbody.rotation *= Quaternion.Euler(Vector3.up * _Velocity * Time.deltaTime);
-
-        _PreviousMousePosition = Input.mousePosition;
+    public void FocusSlot(ItemSlot slot) {
+        _FocusedSlot = slot;
+        if (slot != null) {
+            var cameraDir = Vector3.ProjectOnPlane(Camera.main.transform.position - ShipController.LocalShip.transform.position, Vector3.up).normalized;
+            var slotDir = Vector3.ProjectOnPlane(_FocusedSlot.transform.localPosition, Vector3.up).normalized;
+            _TargetRotation = Quaternion.LookRotation(cameraDir) * Quaternion.Inverse(Quaternion.LookRotation(slotDir));
+        }
     }
 }
