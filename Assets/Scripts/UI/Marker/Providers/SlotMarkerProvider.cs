@@ -26,10 +26,12 @@ namespace UI.Markers {
         public override void UpdateData() {
             Data.WorldPosition = this.transform.position;
             Data.Preview = _Slot.ShipPart.Item.Preview;
+            Data.Focused = _Slot == ShipPort.Instance.FocusedSlot;
         }
     }
 
     public class SlotMarkerData : MarkerData {
         public Texture2D Preview;
+        public bool Focused;
     }
 }

@@ -22,6 +22,9 @@ public class ItemPreviewWidget : UIWidget, ISelectHandler {
         }
     }
 
+    void Awake() {
+        //this.GetComponent<Button>().onClick.AddListener(() => )
+    }
 
     public static ItemPreviewWidget Instantiate(InventoryItem item, Transform host) {
         var widget = Instantiate(WidgetResourcesCache.GetWidget<ItemPreviewWidget>());
