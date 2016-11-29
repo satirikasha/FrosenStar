@@ -16,6 +16,9 @@ public class GameManager : SingletonBehaviour<GameManager> {
 
     protected override void Awake() {
         base.Awake();
+
+        Time.timeScale = 1;
+
         if (ApplicationManager.NewGame) {
             var shipItem = (ShipItem)DefaultShip.GenerateItem();
             PlayerStart.GetDefault().SpawnShip(shipItem);

@@ -39,7 +39,11 @@ public class UIManager : SingletonBehaviour<UIManager> {
     }
 
     public static CanvasGroup GetPanel(string name) {
-        return Instance.Panels.First(_ => _.name == name);
+        return Instance.Panels.FirstOrDefault(_ => _.name == name);
+    }
+
+    public static void SetCurrentPanel(string newPanelName, string requiredPanelName = null, Action<float> customAction = null) {
+        SetCurrentPanel(GetPanel(newPanelName), GetPanel(requiredPanelName), customAction);
     }
 
     public static void SetCurrentPanel(CanvasGroup newPanel, CanvasGroup requiredPanel = null, Action<float> customAction = null) {

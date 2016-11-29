@@ -2,6 +2,7 @@
 using System.Collections;
 using UnityStandardAssets.CinematicEffects;
 using Tools;
+using Tools.Damage;
 
 public class Projectile : MonoBehaviour {
     public float InitialSpeed = 3;
@@ -9,6 +10,7 @@ public class Projectile : MonoBehaviour {
     public Vector2 LifespanRange = new Vector2(0.5f, 1.5f);
     
     public float InheritedSpeed { get; set; }
+    public Damage Damage { get; set; }
 
     public float Lifespan { get; private set; }
     public float LifeTime { get; private set; }
@@ -25,5 +27,15 @@ public class Projectile : MonoBehaviour {
         LifeTime -= deltaTime;
         if (LifeTime <= 0)
             Destroy(this.gameObject);
+    }
+
+    public void OnTriggerEnter(Collider other) {
+        if (other.transform.IsChildOf(Damage.Instigator.transform))
+            return;
+        var damagable = other.gameObject.GetComponent<IDamagable>();
+        if (damagable != null) {
+            damagable.ApplyDamage(Damage);
+        }
+        Destroy(this.gameObject);
     }
 }

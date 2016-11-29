@@ -15,8 +15,6 @@ public class PlayerController : SingletonBehaviour<PlayerController> {
         }
     }
 
-    public EQSItem SelectedItem;
-
     public ShipController Ship { get; private set; }
     public Inventory Inventory { get; private set; }
 
@@ -37,16 +35,16 @@ public class PlayerController : SingletonBehaviour<PlayerController> {
         Ship = this.GetComponent<ShipController>();
         Inventory = this.GetComponent<Inventory>();
 
+        Ship.OnBecameDead += () => {
+            UIManager.SetCurrentPanel("PausePanel", null, _ => Time.timeScale = 1 - _);
+        };
+
         if (ApplicationManager.NewGame) {
             Construct();
         }
         else {
             Load();
         }
-    }
-
-    void Update() {
-        SelectedItem = EQS.GetItems(5).OrderBy(_ => Vector3.Dot(-_.Delta.normalized, this.transform.forward)).FirstOrDefault();
     }
 
     private void Construct() {

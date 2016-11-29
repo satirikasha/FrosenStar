@@ -23,7 +23,7 @@ namespace UI.Markers {
         //}
 
         public override bool GetVisibility() {
-            return Component == PlayerController.LocalPlayer.SelectedItem;
+            return false;// Component == PlayerController.LocalPlayer.SelectedItem;
         }
 
         public override void UpdateData() {

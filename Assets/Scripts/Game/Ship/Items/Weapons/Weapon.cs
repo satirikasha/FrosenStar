@@ -7,15 +7,21 @@ public abstract class Weapon : ShipPart {
 
     public float Cooldown = 0.15f;
 
-    public bool Recharged { get; private set; }
+    public bool Recharged { get; protected set; }
+
+    public WeaponItem WeaponItem {
+        get {
+            return (WeaponItem)Item;
+        }
+    }
 
     private bool _IsFiring;
 
-    public virtual void Awake() {
+    protected virtual void Awake() {
         Recharged = true;
     }
 
-    public virtual void Update() {
+    protected virtual void Update() {
         if (_IsFiring)
             Fire();
     }

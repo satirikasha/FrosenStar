@@ -3,11 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Tools.Damage;
+using System;
 
 public class ShipController : InitializedBehaviour, IDamagable {
 
     private const float BodyRollCoeff = 0.5f;
     private const float CollisionDamageCoeff = 0.2f;
+
+    public event Action OnBecameDead;
 
     public static ShipController LocalShip {
         get {
@@ -16,15 +19,13 @@ public class ShipController : InitializedBehaviour, IDamagable {
     }
 
     public Vector3 Velocity {
-        get
-        {
+        get {
             return Rigidbody.velocity;
         }
     }
 
     public Vector3 Position {
-        get
-        {
+        get {
             return Rigidbody.position;
         }
     }
@@ -33,16 +34,14 @@ public class ShipController : InitializedBehaviour, IDamagable {
 
     public float Health { get; private set; }
     public float NormalizedHealth {
-        get
-        {
+        get {
             return Health / Item.Health;
         }
     }
 
     public float Energy { get; private set; }
     public float NormalizedEnergy {
-        get
-        {
+        get {
             return Energy / Item.Energy;
         }
     }
@@ -151,7 +150,15 @@ public class ShipController : InitializedBehaviour, IDamagable {
     }
 
     public void ApplyDamage(Damage damage) {
-        Health = Mathf.Max(0, Health - damage.Ammount);
+        Health -= damage.Ammount;
+        if (Health <= 0) {
+            Destroy();
+        }
+    }
+
+    public void Destroy() {
+        if (OnBecameDead != null)
+            OnBecameDead();
     }
 
     public void SetHealth(float health) {
@@ -159,7 +166,7 @@ public class ShipController : InitializedBehaviour, IDamagable {
     }
 
     public bool ConsumeEnergy(float energy) {
-        if(Energy >= energy) {
+        if (Energy >= energy) {
             Energy -= energy;
             return true;
         }

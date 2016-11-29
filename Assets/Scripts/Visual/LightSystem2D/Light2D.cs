@@ -10,6 +10,7 @@ public class Light2D : MonoBehaviour {
     [Range(1, 25)]
     public int Depth = 3;
     public int Resolution = 128;
+    public LayerMask Mask;
     private Camera[] _Cameras = new Camera[4];
     private LightShaftMesh[] _LightShaftMeshes = new LightShaftMesh[4];
     private RenderTexture[] _RT = new RenderTexture[4];
@@ -45,6 +46,7 @@ public class Light2D : MonoBehaviour {
             _Cameras[i].SetReplacementShader(Shader.Find("Hidden/DepthSampler"), "RenderType");
             _Cameras[i].farClipPlane = Radius;
             _Cameras[i].targetTexture = _RT[i];
+            _Cameras[i].cullingMask = Mask;
             _Cameras[i].enabled = false;
         }
         RefreshFrustrum();
