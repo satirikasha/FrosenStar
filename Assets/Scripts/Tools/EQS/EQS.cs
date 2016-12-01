@@ -20,18 +20,23 @@ namespace Tools.EQS {
 
         public static IEnumerable<EQSItem> GetItems(float radius) {
             var r2 = radius * radius;
-            return _EQSItems.Where(_ => {
-                _.Delta = _.transform.position - PlayerController.LocalPlayer.Position;
-                return _.Delta.sqrMagnitude < r2;
-            });
+            return _EQSItems.Where(_ => (_.transform.position - PlayerController.LocalPlayer.Position).sqrMagnitude < r2);
         }
 
-        public static IEnumerable<EQSItem> GetItems(float radius, bool visible) {
+        public static IEnumerable<T> GetItems<T>(float radius) {
             var r2 = radius * radius;
-            return _EQSItems.Where(_ => {
-                _.Delta = _.transform.position - PlayerController.LocalPlayer.Position;
-                return _.Visible == visible && _.Delta.sqrMagnitude < r2;
-            });
+            return _EQSItems
+                .Where(_ => (_.transform.position - PlayerController.LocalPlayer.Position).sqrMagnitude < r2)
+                .Select(_ => _.GetComponent<T>())
+                .Where(_ => _ != null);
         }
+
+        //public static IEnumerable<EQSItem> GetItems(float radius, bool visible) {
+        //    var r2 = radius * radius;
+        //    return _EQSItems.Where(_ => {
+        //        _.Delta = _.transform.position - PlayerController.LocalPlayer.Position;
+        //        return _.Visible == visible && _.Delta.sqrMagnitude < r2;
+        //    });
+        //}
     }
 }

@@ -17,6 +17,7 @@ public class PlayerController : SingletonBehaviour<PlayerController> {
 
     public ShipController Ship { get; private set; }
     public Inventory Inventory { get; private set; }
+    public FocusedItem CurrentFocusedItem { get; private set; }
 
     public Vector3 Velocity {
         get {

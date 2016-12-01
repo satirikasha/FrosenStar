@@ -7,7 +7,7 @@ using Tools.UI.Markers;
 namespace UI.Markers {
 
 
-    public class FocusMarkerProvider : MarkerProvider<FocusMarkerWidget, FocusMarkerData, EQSItem> {
+    public abstract class FocusMarkerProvider : MarkerProvider<FocusMarkerWidget, FocusMarkerData, FocusedItem> {
 
         //public override Type RequiredMarkerType {
         //    get {
@@ -23,16 +23,20 @@ namespace UI.Markers {
         //}
 
         public override bool GetVisibility() {
-            return false;// Component == PlayerController.LocalPlayer.SelectedItem;
+            return FocusedItem.CurrentLookAtItem == Component || FocusedItem.CurrentFousedItem == Component;
         }
 
         public override void UpdateData() {
             Data.WorldPosition = this.transform.position;
-            Data.FocusProgress = (Mathf.Sin(Time.timeSinceLevelLoad) + 1) / 2;
+            Data.FocusProgress = Component.NormalizedFocus;
+            Data.Focused = Component.Focused;
+            Data.LookAt = Component.LookAt;
         }
     }
 
     public class FocusMarkerData : MarkerData {
         public float FocusProgress;
+        public bool Focused;
+        public bool LookAt;
     }
 }

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Tools.Damage;
 using System;
+using Tools.EQS;
 
 public class ShipController : InitializedBehaviour, IDamagable {
 
@@ -11,6 +12,10 @@ public class ShipController : InitializedBehaviour, IDamagable {
     private const float CollisionDamageCoeff = 0.2f;
 
     public event Action OnBecameDead;
+
+    public float findRadius = 3;
+    public float looseRadius = 6;
+    public float dotFactor = 0.5f;
 
     public static ShipController LocalShip {
         get {
@@ -75,6 +80,7 @@ public class ShipController : InitializedBehaviour, IDamagable {
         UpdateEngines();
         UpdateRotationTorque();
         UpdateStabilizationTorque();
+        UpdateFocus();
     }
 
     void Update() {
@@ -119,6 +125,22 @@ public class ShipController : InitializedBehaviour, IDamagable {
             var lonStabilization = -lonOffset * StabilizationTorque * StabilizationScaleLon * this.transform.forward;
             var latStabilization = -latOffset * StabilizationTorque * StabilizationScaleLat * this.transform.right;
             Rigidbody.AddTorque(lonStabilization + latStabilization);
+        }
+    }
+
+    private void UpdateFocus() {
+        var item = EQS
+            .GetItems<FocusedItem>(findRadius)
+            .Where(_ => Vector3.Dot((_.transform.position - this.transform.position).normalized, this.transform.forward) > dotFactor)
+            .OrderBy(_ => {
+                var delta = _.transform.position - this.transform.position;
+                return Vector3.Dot(delta.normalized, this.transform.forward) - delta.sqrMagnitude;
+            })
+            .FirstOrDefault();
+
+        FocusedItem.CurrentLookAtItem = item;
+        if (item != null) {
+            item.ApplyFocus(2 * Time.deltaTime);
         }
     }
 
