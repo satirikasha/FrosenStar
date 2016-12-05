@@ -48,6 +48,11 @@ public class PlayerController : SingletonBehaviour<PlayerController> {
         }
     }
 
+    void Update() {
+        Ship.SetSteering(Input.GetAxis("Horizontal"));
+        Ship.SetThrottle(Input.GetAxis("Vertical"));
+    }
+
     private void Construct() {
         Ship.RefreshSlots();
         Ship.ItemSlots.ForEach(_ => _.Construct());

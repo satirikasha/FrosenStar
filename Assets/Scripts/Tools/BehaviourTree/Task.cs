@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace Tools.BehaviourTree {
 
@@ -11,7 +12,15 @@ namespace Tools.BehaviourTree {
 
         protected List<Task<B>> Children { get; set; }
 
-        protected void UpdateTask() {
+        private bool _Initialized = false;
+
+        public TaskStatus UpdateTask() {
+            if (!_Initialized) {
+                Init();
+                Debug.Log("Init Task");
+                _Initialized = true;
+            }
+
             Status = Run();
             if (Parent != null) {
                 switch (Status) {
@@ -20,15 +29,22 @@ namespace Tools.BehaviourTree {
                     case TaskStatus.Failure: Parent.OnChildFailure(this); break;
                 }
             }
+
+            return Status;
         }
 
         public void AddChild(Task<B> child) {
+
+            if (Children == null)
+                Children = new List<Task<B>>();
+
             Children.Add(child);
             child.BehaviourTree = BehaviourTree;
             BehaviourTree.RegisterTask(child);
             OnChildAdded(child);
         }
 
+        public abstract void Init();
         public abstract TaskStatus Run();
 
         public virtual void OnChildRunning(Task<B> child) { }

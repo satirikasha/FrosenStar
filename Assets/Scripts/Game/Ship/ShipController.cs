@@ -23,6 +23,12 @@ public class ShipController : InitializedBehaviour, IDamagable {
         }
     }
 
+    public bool IsLocalShip {
+        get {
+            return this == LocalShip;
+        }
+    }
+
     public Vector3 Velocity {
         get {
             return Rigidbody.velocity;
@@ -37,14 +43,14 @@ public class ShipController : InitializedBehaviour, IDamagable {
 
     public ShipItem Item;
 
-    public float Health { get; private set; }
+    public float Health;// { get; private set; }
     public float NormalizedHealth {
         get {
             return Health / Item.Health;
         }
     }
 
-    public float Energy { get; private set; }
+    public float Energy;// { get; private set; }
     public float NormalizedEnergy {
         get {
             return Energy / Item.Energy;
@@ -62,6 +68,8 @@ public class ShipController : InitializedBehaviour, IDamagable {
     public List<Weapon> Weapons { get; private set; }
     public List<Engine> Engines { get; private set; }
 
+    public float Throttle { get; private set; }
+    public float Steering { get; private set; }
 
     void Awake() {
         Init();
@@ -102,16 +110,14 @@ public class ShipController : InitializedBehaviour, IDamagable {
 
     private void UpdateEngines() {
         if (ApplicationManager.GameMode) {
-            var vertical = Input.GetAxis("Vertical");
-            Engines.ForEach(_ => _.ApplyThrust(Rigidbody, vertical, Time.fixedDeltaTime));
+            Engines.ForEach(_ => _.ApplyThrust(Rigidbody, Throttle, Time.fixedDeltaTime));
         }
     }
 
     private void UpdateRotationTorque() {
         if (ApplicationManager.GameMode) {
-            var horizontal = Input.GetAxis("Horizontal");
-            var turnTorque = this.transform.up * horizontal * Item.Handling;
-            var rollTorque = this.transform.forward * horizontal * Item.Handling * BodyRollCoeff * -1;
+            var turnTorque = this.transform.up * Steering * Item.Handling;
+            var rollTorque = this.transform.forward * Steering * Item.Handling * BodyRollCoeff * -1;
             Rigidbody.AddTorque(turnTorque + rollTorque);
         }
     }
@@ -153,6 +159,14 @@ public class ShipController : InitializedBehaviour, IDamagable {
                 Weapons.ForEach(_ => _.StopFire());
             }
         }
+    }
+
+    public void SetThrottle(float value) {
+        Throttle = Mathf.Clamp(value, -1, 1);
+    }
+
+    public void SetSteering(float value) {
+        Steering = Mathf.Clamp(value, -1, 1);
     }
 
     public void RefreshSlots() {

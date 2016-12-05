@@ -21,7 +21,7 @@ public class PlayerStart : MonoBehaviour {
     }
 
     public virtual ShipController SpawnShip(ShipItem ship) {
-        var go = ship.Instantiate();
+        var go = ship.Instantiate(false);
         go.transform.position = this.transform.position;
         go.transform.rotation = this.transform.rotation;
         return go;

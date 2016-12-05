@@ -18,12 +18,17 @@ namespace Tools.BehaviourTree {
             Executor = executor;
         }
 
+
+        public override void Init() { }
+
         public override TaskStatus Run() {
-            Debug.Log("Run BT");
-            return Children[0].Run();
+            return Children[0].UpdateTask();
         }
 
         public void RegisterTask(Task<B> task) {
+            if (Tasks == null)
+                Tasks = new List<Task<B>>();
+
             Tasks.Add(task);
         }
     }
