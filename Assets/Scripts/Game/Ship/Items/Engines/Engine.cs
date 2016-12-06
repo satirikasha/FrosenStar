@@ -8,6 +8,9 @@ public class Engine : ShipPart {
     public float Thrust = 750;
 
     public void ApplyThrust(Rigidbody rigidbody, float throttle, float deltaTime) {
+        if (Input.GetKey(KeyCode.LeftShift))
+            throttle *= 2.5f;
+
         if (throttle < 0)
             throttle *= 0.25f;
 
