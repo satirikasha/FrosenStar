@@ -6,14 +6,16 @@ Shader "Enviroment/Nebula(Planets)_test"
 	{
 		_DetailMask("Detail Mask", 2D) = "black" {}
 		_DetailMaskSize("Detail Mask Size", Range(1, 100)) = 50
-		_DetailMaskDepth("Detail Mask Depth", Range(0, 1)) = 0.5
+		_DetailMaskDepth("Detail Mask Depth", Range(1, 100)) = 50
 
 		_Stars("Stars", 2D) = "black" {}
 		_StarsSize("Stars Size", Range(1, 100)) = 50
-		_StarsDepth("Stars Depth", Range(0, 1)) = 0.5
+		_StarsDepth("Stars Depth", Range(1, 100)) = 50
+
 		_NebulaBase("Nebula Base", 2D) = "black" {}
 		_NebulaBaseSize("Nebula Base Size", Range(1, 100)) = 50
-		_NebulaBaseDepth("Nebula Base Depth", Range(0, 1)) = 0.5
+		_NebulaBaseDepth("Nebula Base Depth", Range(1, 100)) = 50
+
 		_NebulaDetail("Nebula Detail", 2D) = "black" {}
 		_NebulaDetailSize("Nebula Detail Size", Range(1, 100)) = 50
 		_NebulaDetailDepth("Nebula Detail Depth", Range(0, 1)) = 0.5
@@ -90,6 +92,23 @@ Shader "Enviroment/Nebula(Planets)_test"
 				return -_WorldSpaceCameraPos.xyz * depth;
 			}
 			
+			half4 TriplanarMap(float3 worldPos, float3 worldNormal, float size, float sharpness, sampler2D tex) {
+				
+				half2 yUV = worldPos.xz / size;
+				half2 xUV = worldPos.zy / size;
+				half2 zUV = worldPos.xy / size;
+
+				half4 yDiff = tex2D(tex, yUV);
+				half4 xDiff = tex2D(tex, xUV);
+				half4 zDiff = tex2D(tex, zUV);
+
+				half3 blendWeights = pow(abs(worldNormal), sharpness);
+				// Divide our blend mask by the sum of it's components, this will make x+y+z=1
+				blendWeights = blendWeights / (blendWeights.x + blendWeights.y + blendWeights.z);
+				// Finally, blend together all three samples based on the blend mask.
+				return xDiff * blendWeights.x + yDiff * blendWeights.y + zDiff * blendWeights.z;
+			}
+
 			v2f vert (appdata v)
 			{
 				v2f o;
@@ -103,35 +122,23 @@ Shader "Enviroment/Nebula(Planets)_test"
 			
 			fixed4 frag (v2f i) : SV_Target
 
-			{
-				//_DetailMask
-			//	half2 yUV = i.worldPos.xz / _DetailMaskSize;
-			//	half2 xUV = i.worldPos.zy / _DetailMaskSize;
-			//	half2 zUV = i.worldPos.xy / _DetailMaskSize;
-				// Now do texture samples from our diffuse map with each of the 3 UV set's we've just made.
-			//	half3 yDiff = tex2D(_DetailMask, yUV);
-			//	half3 xDiff = tex2D(_DetailMask, xUV);
-			//	half3 zDiff = tex2D(_DetailMask, zUV);
+			{			
+				half4 mask = TriplanarMap(i.worldPos, i.worldNormal, _DetailMaskSize, _DetailMaskDepth, _DetailMask);
+				half4 ice = TriplanarMap(i.worldPos, i.worldNormal, _StarsSize, _StarsDepth, _Stars);
+				half4 maskice = TriplanarMap(i.worldPos, i.worldNormal, _NebulaBaseSize, _NebulaBaseDepth, _NebulaBase);
+				half4 craters = TriplanarMap(i.worldPos, i.worldNormal, _NebulaDetailSize, _NebulaDetailDepth, _NebulaDetail);
+				half4 cratersMask = TriplanarMap(i.worldPos, i.worldNormal, _Stars2Size, _Stars2Depth, _Stars2);
 
-				half2 yUV = i.worldPos.xz / _DetailMaskSize;
-				half2 xUV = i.worldPos.zy / _DetailMaskSize;
-				half2 zUV = i.worldPos.xy / _DetailMaskSize;
-				// Now do texture samples from our diffuse map with each of the 3 UV set's we've just made.
-				half3 yDiff = tex2D(_DetailMask, yUV);
-				half3 xDiff = tex2D(_DetailMask, xUV);
-				half3 zDiff = tex2D(_DetailMask, zUV);
+				half4 col = mask;
 
+				col = col * (cratersMask * craters);
+				col = col + (1 - cratersMask) * mask;
+				col = col * (1 - maskice) + maskice * ice * 1.2;
+				
 
+				return col;
 
-
-				half3 blendWeights = pow(abs(i.worldNormal), _TriplanarBlendSharpness);
-				// Divide our blend mask by the sum of it's components, this will make x+y+z=1
-				blendWeights = blendWeights / (blendWeights.x + blendWeights.y + blendWeights.z);
-				// Finally, blend together all three samples based on the blend mask.
-				fixed3 col = xDiff * blendWeights.x + yDiff * blendWeights.y + zDiff * blendWeights.z;
-				return fixed4(col, 1);
-
-
+				return mask * (1 - maskice) * (1 - cratersMask) + (maskice * ice) + (cratersMask * craters);
 
 			//	fixed3 detailMask = tex2D(_DetailMask, (i.uv + DepthParallaxOffset(_DetailMaskDepth, i.viewDir)) / _DetailMaskSize).rgb;
 			//	fixed3 nebulaBase = tex2D(_NebulaBase, (i.uv + DepthParallaxOffset(_NebulaBaseDepth, i.viewDir)) / _NebulaBaseSize).rgb;
@@ -143,7 +150,7 @@ Shader "Enviroment/Nebula(Planets)_test"
 			//	fixed3 detailMask2 = tex2D(_DetailMask2, (i.uv + DepthParallaxOffset(_DetailMask2Depth, i.viewDir)) / _DetailMask2Size).rgb;
 				//return fixed4(pow(detailMask2, 3) * 3, 1);
 			//	fixed3 col = nebulaSolid + stars2 *detailMask2 *1.5 + nebulaBase + nebulaDetail + stars * pow(detailMask, 4) * 2;
-				return fixed4(col, 1);
+				//return fixed4(col, 1);
 			}
 			ENDCG
 		}
