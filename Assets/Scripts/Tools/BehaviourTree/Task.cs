@@ -17,7 +17,6 @@ namespace Tools.BehaviourTree {
         public TaskStatus UpdateTask() {
             if (!_Initialized) {
                 Init();
-                Debug.Log("Init Task");
                 _Initialized = true;
             }
 

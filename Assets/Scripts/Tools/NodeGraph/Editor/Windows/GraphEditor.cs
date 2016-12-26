@@ -70,33 +70,34 @@ namespace NodeGraph.Editor {
 
         void OnGUI() {
 
-            //if (EditorApplication.isCompiling) {
-            //    ShowNotification(new GUIContent("Compiling Please Wait..."));
-            //    return;
-            //}
-
-            GUIStyle background = "flow background";
-            _GraphRect = new Rect(0, 0, position.width, position.height);
-            _GraphExtents = new Rect(0, 0, position.width * 2, position.height * 2);
-            if (Event.current.type == EventType.Repaint) {
-                background.Draw(_GraphRect, false, false, false, false);
+            if (EditorApplication.isCompiling) {
+                return;
             }
 
+            _GraphRect = new Rect(0, 0, position.width, position.height);
+            _GraphExtents = new Rect(0, 0, position.width * 1.5f, position.height * 1.5f);
 
-            _ScrollPosition = GUI.BeginScrollView(_GraphRect, _ScrollPosition, _GraphExtents, GUIStyle.none, GUIStyle.none);
-            DrawGrid();
-            GUI.EndScrollView();
+            _GraphRect.x = _ScrollPosition.x;
+            _GraphRect.y = _ScrollPosition.y;
+
+            GUIStyle background = "flow background";
+            if (Event.current.type == EventType.Repaint) {
+                background.Draw(_GraphRect, false, false, false, false);
+                DrawGrid();
+            }
+
+            if (Event.current.button == 2 && Event.current.type == EventType.MouseDrag)
+                _ScrollPosition += Event.current.delta;
         }
 
         public void BeginGraphGUI(EditorWindow host, Rect position) {
             //this.m_GraphClientArea = position;
             //this.m_Host = host;
-            GUIStyle background = "flow background";
-            if (Event.current.type == EventType.Repaint) {
-                background.Draw(position, false, false, false, false);
-            }
-            //this.m_ScrollPosition = GUI.BeginScrollView(position, this.m_ScrollPosition, this.m_Graph.graphExtents, GUIStyle.none, GUIStyle.none);
-            this.DrawGrid();
+            //GUIStyle background = "flow background";
+            //if (Event.current.type == EventType.Repaint) {
+            //    background.Draw(position, false, false, false, false);
+            //}
+            //DrawGrid();
         }
 
         public void EndGraphGUI() {
@@ -118,12 +119,16 @@ namespace NodeGraph.Editor {
             Handles.color = gridColor;
 
             for (float num = _GraphExtents.xMin - _GraphExtents.xMin % gridSize; num < _GraphExtents.xMax; num += gridSize) {
-                Handles.DrawLine(new Vector2(num, _GraphExtents.xMin), new Vector2(num, _GraphExtents.xMax));
+                Handles.DrawLine(new Vector2(num, _GraphExtents.yMin), new Vector2(num, _GraphExtents.yMax));
             }
 
             for (float num2 = _GraphExtents.yMin - _GraphExtents.yMin % gridSize; num2 < _GraphExtents.yMax; num2 += gridSize) {
-                Handles.DrawLine(new Vector2(_GraphExtents.yMin, num2), new Vector2(_GraphExtents.yMax, num2));
+                Handles.DrawLine(new Vector2(_GraphExtents.xMin, num2), new Vector2(_GraphExtents.xMax, num2));
             }
+        }
+
+        private void TransformGraph() {
+
         }
     }
 }

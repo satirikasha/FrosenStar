@@ -7,6 +7,10 @@ public class Engine : ShipPart {
 
     public float Thrust = 750;
 
+    void Start() {
+        Instantiate(VisualEffect.GetEffectResource<ThrusterEffect>(), this.transform, false);
+    }
+
     public void ApplyThrust(Rigidbody rigidbody, float throttle, float deltaTime) {
         if (Input.GetKey(KeyCode.LeftShift))
             throttle *= 2.5f;

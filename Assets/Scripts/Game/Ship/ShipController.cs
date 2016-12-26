@@ -17,6 +17,8 @@ public class ShipController : InitializedBehaviour, IDamagable {
     public float looseRadius = 6;
     public float dotFactor = 0.5f;
 
+    public ShipItem Item;
+
     public static ShipController LocalShip {
         get {
             return PlayerController.LocalPlayer.Ship;
@@ -41,16 +43,14 @@ public class ShipController : InitializedBehaviour, IDamagable {
         }
     }
 
-    public ShipItem Item;
-
-    public float Health;// { get; private set; }
+    public float Health { get; private set; }
     public float NormalizedHealth {
         get {
             return Health / Item.Health;
         }
     }
 
-    public float Energy;// { get; private set; }
+    public float Energy { get; private set; }
     public float NormalizedEnergy {
         get {
             return Energy / Item.Energy;
@@ -63,6 +63,9 @@ public class ShipController : InitializedBehaviour, IDamagable {
 
     public Rigidbody Rigidbody { get; private set; }
     public Inventory Inventory { get; private set; }
+    public Collider Collider { get; private set; }
+    public float Width { get; private set; }
+
 
     public List<ItemSlot> ItemSlots { get; private set; }
     public List<Weapon> Weapons { get; private set; }
@@ -92,7 +95,7 @@ public class ShipController : InitializedBehaviour, IDamagable {
     }
 
     void Update() {
-        UpdateWeapons();
+
     }
 
     public void OnCollisionEnter(Collision collision) {
@@ -106,6 +109,8 @@ public class ShipController : InitializedBehaviour, IDamagable {
     protected override void Init() {
         Rigidbody = this.GetComponent<Rigidbody>();
         Inventory = this.GetComponent<Inventory>();
+        Collider = this.GetComponentInChildren<Collider>();
+        Width = (Collider as MeshCollider).sharedMesh.bounds.extents.x;
     }
 
     private void UpdateEngines() {
@@ -150,15 +155,16 @@ public class ShipController : InitializedBehaviour, IDamagable {
         }
     }
 
-    private void UpdateWeapons() {
-        if (ApplicationManager.GameMode) {
-            if (Input.GetButtonDown("Fire") && !GameManager.Instance.Paused) {
-                Weapons.ForEach(_ => _.StartFire());
-            }
-            if (Input.GetButtonUp("Fire")) {
-                Weapons.ForEach(_ => _.StopFire());
-            }
-        }
+    public void StartFire() {
+    if (ApplicationManager.GameMode && !GameManager.Instance.Paused) {
+        Weapons.ForEach(_ => _.StartFire());
+    }
+    }
+
+    public void StopFire() {
+    if (ApplicationManager.GameMode) {
+        Weapons.ForEach(_ => _.StopFire());
+    }
     }
 
     public void SetThrottle(float value) {

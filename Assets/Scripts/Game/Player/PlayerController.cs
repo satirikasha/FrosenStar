@@ -51,6 +51,10 @@ public class PlayerController : SingletonBehaviour<PlayerController> {
     void Update() {
         Ship.SetSteering(Input.GetAxis("Horizontal"));
         Ship.SetThrottle(Input.GetAxis("Vertical"));
+        if (Input.GetButtonDown("Fire"))
+            Ship.StartFire();
+        if (Input.GetButtonUp("Fire"))
+            Ship.StopFire();
     }
 
     private void Construct() {
@@ -65,7 +69,7 @@ public class PlayerController : SingletonBehaviour<PlayerController> {
         Inventory.Items.OfType<SlotItem>().ForEach(_ => {
             if (_.EquipedSlotID >= 0) {
                 var slot = Ship.ItemSlots.FirstOrDefault(s => s.ID == _.EquipedSlotID);
-                if(slot != null) {
+                if (slot != null) {
                     slot.Equip(_);
                 }
             }

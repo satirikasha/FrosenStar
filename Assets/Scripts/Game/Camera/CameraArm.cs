@@ -15,7 +15,6 @@ public class CameraArm : MonoBehaviour {
     }
 
     void FixedUpdate() {
-        Debug.DrawLine(PlayerController.LocalPlayer.transform.position, GetFocusPosition());
         this.transform.position = Vector3.Lerp(
             this.transform.position,
             GetTargetPosition(),
