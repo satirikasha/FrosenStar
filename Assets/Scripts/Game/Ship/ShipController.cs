@@ -199,6 +199,7 @@ public class ShipController : InitializedBehaviour, IDamagable {
     }
 
     public void Destroy() {
+        this.gameObject.SetActive(false);
         if (OnBecameDead != null)
             OnBecameDead();
     }

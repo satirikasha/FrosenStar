@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Tools.BehaviourTree;
 using UnityEngine;
 
-public class ShipAIController : BTExecutor<ShipBlackboard> {
+public class ShipAIController : BehaviourTreeExecutor {
 
     public ShipController Ship { get; private set; }
 
@@ -17,6 +17,7 @@ public class ShipAIController : BTExecutor<ShipBlackboard> {
         Ship.RefreshSlots();
         Ship.ItemSlots.ForEach(_ => _.Construct());
 
-        BehaviourTree.AddChild(new GoToPlayer());
+        var move = Task.Instantiate<MoveTask>();
+        BehaviourTree.AddChild(move);
     }
 }

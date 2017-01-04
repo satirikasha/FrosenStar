@@ -48,12 +48,6 @@ namespace NodeGraph.Editor {
             wantsMouseMove = true;
             minSize = new Vector2(700, 300);
             Selection.selectionChanged += OnSelectionChanged;
-
-            //Debug Area
-            _GraphRect = new Rect(0, 0, position.width, position.height);
-            _GraphExtents = new Rect(0, 0, position.width * 1.5f, position.height * 1.5f);
-            //End Debug
-
             Repaint();
         }
 
@@ -80,7 +74,7 @@ namespace NodeGraph.Editor {
                 return;
             }
 
-            BeginGraphGUI(this, _GraphRect);
+            BeginGraphGUI(this, new Rect(Vector2.zero, position.size));
             OnGraphGUI();
             EndGraphGUI();
         }
@@ -88,10 +82,14 @@ namespace NodeGraph.Editor {
         public void BeginGraphGUI(EditorWindow host, Rect position) {
             _Host = host;
             _GraphArea = position;
+            //Debug Area
+            _GraphRect = _GraphArea;
+            _GraphExtents = new Rect(0, 0, _GraphArea.width * 1.5f, _GraphArea.height * 1.5f);
+            //End Debug
 
             GUIStyle background = "flow background";
             if (Event.current.type == EventType.Repaint) {
-                background.Draw(_GraphRect, false, false, false, false);
+                background.Draw(position, false, false, false, false);
             }
 
             _Position = GUI.BeginScrollView(position, _Position, _GraphExtents, GUIStyle.none, GUIStyle.none);
