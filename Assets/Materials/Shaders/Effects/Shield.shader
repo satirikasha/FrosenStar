@@ -6,6 +6,7 @@
         _Scale ("Scale", Range(1,10)) = 1
         _FrontMask ("Front Mask", 2D) = "white" {}
         _Color ("Color", Color) = (1,1,1,1)
+        _Fill ("Fill", Range(0,1)) = 1
 	}
 	SubShader
 	{
@@ -41,6 +42,7 @@
                 float4 localPos: TEXCOORD3;
 			};
 
+            float _Fill;
             float _Scale;
             float4 _Color;
 
@@ -65,11 +67,15 @@
                 float3 viewDir = _WorldSpaceCameraPos.xyz - i.worldPos.xyz;
                 float fresnel = pow (1 - saturate (dot (normalize (viewDir), normalize (normalDir))), 0.75);
                 float fresnelSoft = pow(1 - saturate(dot(normalize(viewDir), normalize(normalDir))), 7);
-                float frontMask = tex2D(_FrontMask, i.uv).r;
+                float frontMask = saturate(tex2D(_FrontMask, i.uv).r) + (1 - _Fill) * 3;
                 fresnel = fresnel - fresnelSoft;
                 fresnel *= Noise (i.worldPos.xyz, 5) * frontMask * 2;
                 float tex = tex2D(_MainTex, i.uv * _Scale).r;
-				fixed4 col = _Color * (fresnel + fresnel * tex);
+                float shield = fresnel + fresnel * tex;
+                float fill = lerp(0,shield, _Fill * shield);
+                return fill;
+                float outline = lerp(0,1, abs(_Fill - shield) < 0.01) * (1 - _Fill);
+				fixed4 col = _Color * (fill + outline);
 				return col;
 			}
 			ENDCG
