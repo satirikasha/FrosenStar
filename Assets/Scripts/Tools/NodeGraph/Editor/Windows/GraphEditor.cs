@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
-
+using UnityEngine.Profiling;
 
 namespace NodeGraph.Editor {
 
@@ -33,18 +33,18 @@ namespace NodeGraph.Editor {
         private static readonly Color GridMinorColorLight = new Color(0f, 0f, 0f, 0.1f);
         private static readonly Color GridMajorColorLight = new Color(0f, 0f, 0f, 0.15f);
 
-        private Vector2 _ScrollPosition;
+        private EditorWindow _Host;
+        private Vector2 _Position;
+        private float _Scale = 1;
         private Rect _GraphRect;
+        private Rect _GraphArea;
         private Rect _GraphExtents;
+        private Rect _LastGraphExtents;
+        private Matrix4x4 _MatrixGUI;
 
         void OnEnable() {
-#if UNITY_5
             var canvasIcon = (Texture)Resources.Load("CanvasIcon");
             titleContent = new GUIContent("Canvas", canvasIcon);
-#else
-	        title = "Canvas";
-#endif
-
             wantsMouseMove = true;
             minSize = new Vector2(700, 300);
             Selection.selectionChanged += OnSelectionChanged;
@@ -70,40 +70,88 @@ namespace NodeGraph.Editor {
 
         void OnGUI() {
 
-            //if (EditorApplication.isCompiling) {
-            //    ShowNotification(new GUIContent("Compiling Please Wait..."));
-            //    return;
-            //}
-
-            GUIStyle background = "flow background";
-            _GraphRect = new Rect(0, 0, position.width, position.height);
-            _GraphExtents = new Rect(0, 0, position.width * 2, position.height * 2);
-            if (Event.current.type == EventType.Repaint) {
-                background.Draw(_GraphRect, false, false, false, false);
+            if (EditorApplication.isCompiling) {
+                return;
             }
 
-
-            _ScrollPosition = GUI.BeginScrollView(_GraphRect, _ScrollPosition, _GraphExtents, GUIStyle.none, GUIStyle.none);
-            DrawGrid();
-            GUI.EndScrollView();
+            BeginGraphGUI(this, new Rect(Vector2.zero, position.size));
+            OnGraphGUI();
+            EndGraphGUI();
         }
 
         public void BeginGraphGUI(EditorWindow host, Rect position) {
-            //this.m_GraphClientArea = position;
-            //this.m_Host = host;
+            _Host = host;
+            _GraphArea = position;
+            //Debug Area
+            _GraphRect = _GraphArea;
+            _GraphExtents = new Rect(0, 0, _GraphArea.width * 1.5f, _GraphArea.height * 1.5f);
+            //End Debug
+
             GUIStyle background = "flow background";
             if (Event.current.type == EventType.Repaint) {
                 background.Draw(position, false, false, false, false);
             }
-            //this.m_ScrollPosition = GUI.BeginScrollView(position, this.m_ScrollPosition, this.m_Graph.graphExtents, GUIStyle.none, GUIStyle.none);
-            this.DrawGrid();
+
+            _Position = GUI.BeginScrollView(position, _Position, _GraphExtents, GUIStyle.none, GUIStyle.none);
+            //BeginZoomArea(position);
+            DrawGrid();
+        }
+
+        private Rect winRect = new Rect(300, 300, 120, 50);
+        public virtual void OnGraphGUI() {
+            _Host.BeginWindows();
+            //foreach (Node current in this.m_Graph.nodes) {
+            //    Node n2 = current;
+            //    bool on = this.selection.Contains(current);
+            //    Styles.Color color = (!current.nodeIsInvalid) ? current.color : Styles.Color.Red;
+            /*current.position =*/
+            winRect = GUILayout.Window(110, winRect, _ => {
+                if (GUILayout.Button("Click me a lot, bitch!"))
+                    Debug.Log("Got a click");
+                GUI.DragWindow();
+            }, "Node");
+            //}
+            _Host.EndWindows();
+            //this.edgeGUI.DoEdges();
+            //this.edgeGUI.DoDraggedEdge();
+            //this.DragSelection(new Rect(-5000f, -5000f, 10000f, 10000f));
+            //this.ShowContextMenu();
+            //this.HandleMenuEvents();
         }
 
         public void EndGraphGUI() {
             //this.UpdateGraphExtents();
-            //this.UpdateScrollPosition();
-            //this.DragGraph();
-            //GUI.EndScrollView();
+            DragGraph();
+            ScaleGraph();
+
+            //EndZoomArea();
+            GUI.EndScrollView();
+        }
+
+        void BeginZoomArea(Rect position) {
+            _MatrixGUI = GUI.matrix;
+            var scale = Matrix4x4.Scale(new Vector3(_Scale, _Scale, 1));
+            GUI.matrix *= scale;
+            Handles.matrix = GUI.matrix;
+        }
+
+        void EndZoomArea() {
+            GUI.matrix = _MatrixGUI;
+            Handles.matrix = _MatrixGUI;
+        }
+
+        private void DragGraph() {
+            if (Event.current.button == 2 && Event.current.type == EventType.MouseDrag) {
+                _Position -= Event.current.delta;
+                Event.current.Use();
+            }
+        }
+
+        private void ScaleGraph() {
+            if (Event.current.type == EventType.ScrollWheel) {
+                _Scale -= Event.current.delta.y / 25f;
+                Event.current.Use();
+            }
         }
 
         private void DrawGrid() {
@@ -118,11 +166,11 @@ namespace NodeGraph.Editor {
             Handles.color = gridColor;
 
             for (float num = _GraphExtents.xMin - _GraphExtents.xMin % gridSize; num < _GraphExtents.xMax; num += gridSize) {
-                Handles.DrawLine(new Vector2(num, _GraphExtents.xMin), new Vector2(num, _GraphExtents.xMax));
+                Handles.DrawLine(new Vector2(num, _GraphExtents.yMin), new Vector2(num, _GraphExtents.yMax));
             }
 
             for (float num2 = _GraphExtents.yMin - _GraphExtents.yMin % gridSize; num2 < _GraphExtents.yMax; num2 += gridSize) {
-                Handles.DrawLine(new Vector2(_GraphExtents.yMin, num2), new Vector2(_GraphExtents.yMax, num2));
+                Handles.DrawLine(new Vector2(_GraphExtents.xMin, num2), new Vector2(_GraphExtents.xMax, num2));
             }
         }
     }

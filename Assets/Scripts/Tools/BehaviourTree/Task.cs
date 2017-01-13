@@ -3,21 +3,20 @@ using UnityEngine;
 
 namespace Tools.BehaviourTree {
 
+    public abstract class Task : ScriptableObject {
 
-    public abstract class Task<B> where B : Blackboard {
-
-        public BehaviourTree<B> BehaviourTree { get; protected set; }
-        public Task<B> Parent { get; private set; }
+        public BehaviourTree BehaviourTree { get; protected set; }
+        public Task Parent { get; private set; }
         public TaskStatus Status { get; private set; }
 
-        protected List<Task<B>> Children { get; set; }
+        protected List<Task> Children { get; set; }
 
         private bool _Initialized = false;
 
         public TaskStatus UpdateTask() {
             if (!_Initialized) {
+                this.hideFlags = HideFlags.HideAndDontSave;
                 Init();
-                Debug.Log("Init Task");
                 _Initialized = true;
             }
 
@@ -33,10 +32,10 @@ namespace Tools.BehaviourTree {
             return Status;
         }
 
-        public void AddChild(Task<B> child) {
+        public void AddChild(Task child) {
 
             if (Children == null)
-                Children = new List<Task<B>>();
+                Children = new List<Task>();
 
             Children.Add(child);
             child.BehaviourTree = BehaviourTree;
@@ -44,13 +43,19 @@ namespace Tools.BehaviourTree {
             OnChildAdded(child);
         }
 
+        public static T Instantiate<T>() where T : Task {
+            var instance = ScriptableObject.CreateInstance<T>();
+            instance.hideFlags = HideFlags.HideAndDontSave;
+            return instance;
+        }
+
         public abstract void Init();
         public abstract TaskStatus Run();
 
-        public virtual void OnChildRunning(Task<B> child) { }
-        public virtual void OnChildSuccess(Task<B> child) { }
-        public virtual void OnChildFailure(Task<B> child) { }
-        public virtual void OnChildAdded(Task<B> child) { }
+        public virtual void OnChildRunning(Task child) { }
+        public virtual void OnChildSuccess(Task child) { }
+        public virtual void OnChildFailure(Task child) { }
+        public virtual void OnChildAdded(Task child) { }
 
 
     }

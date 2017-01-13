@@ -6,7 +6,7 @@ using Tools.Damage;
 
 public class Projectile : MonoBehaviour {
     public float InitialSpeed = 3;
-    //[Interval(0, 10)]
+    [Interval(0, 10)]
     public Vector2 LifespanRange = new Vector2(0.5f, 1.5f);
     
     public float InheritedSpeed { get; set; }
@@ -36,6 +36,10 @@ public class Projectile : MonoBehaviour {
         if (damagable != null) {
             damagable.ApplyDamage(Damage);
         }
+
+        var effect = VisualEffect.GetEffect<ExplosionEffect>();
+        effect.transform.position = this.transform.position;
+        effect.Play();
         Destroy(this.gameObject);
     }
 }

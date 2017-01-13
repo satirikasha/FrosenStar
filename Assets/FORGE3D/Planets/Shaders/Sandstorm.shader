@@ -55,7 +55,6 @@
 		Pass  
 		{
 			CGPROGRAM
-		  	//#pragma only_renderers opengl d3d9 d3d11
             #pragma glsl
             #pragma target 3.0
 			#pragma vertex EarthLikeVert
@@ -80,9 +79,9 @@
             
 				baseColor = saturate(baseColor * baseColor * _ColorPassTrough);
 				baseColor = AddDiffuse(baseColor, p);
-				baseColor = AddFresnelLand(baseColor, p);
+				//baseColor = AddFresnelLand(baseColor, p);
 			
-				baseColor = AddClouds(baseColor, p);
+				//baseColor = AddClouds(baseColor, p);
                 baseColor += (1 - p.DiffuseFactor) * p.Ambient;
  
             	return float4(baseColor, 1);
