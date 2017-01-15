@@ -112,7 +112,7 @@
             o.Specular = 0.5;
             o.Gloss = data.b * _Specular;
             o.Alpha = height;
-			o.Albedo = c.rgb + lerp(c.rgb, _FresnelColor.rgb, _FresnelColor.a) * (pow(1 - dot (normalize (IN.viewDir), o.Normal), _FresnelPower) * _FresnelIntensity);
+			o.Albedo = c.rgb + lerp(c.rgb, _FresnelColor.rgb, _FresnelColor.a) * (pow(1 - dot (normalize (IN.viewDir), o.SurfaceNormal), _FresnelPower) * _FresnelIntensity);
 		}
 		ENDCG
 	}
