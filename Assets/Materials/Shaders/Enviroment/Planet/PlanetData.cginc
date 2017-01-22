@@ -15,7 +15,6 @@ half _NormalIntensity;
 half _WaterLevel;
 half _DesertLevel;
 half _VegetationLevel;
-half _MountainLevel;
 half _SnowLevel;
 
 struct Input {

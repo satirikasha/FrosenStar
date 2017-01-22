@@ -16,7 +16,7 @@
 		_DesertColor("Desert Color", Color) = (1,1,0,1)
 		_VegetationLevel("Vegetation Level", Range(0, 1)) = 0.7
 		_VegetationColor("Vegetation Color", Color) = (0,1,0,1)
-		_MountainLevel("Mountain Level", Range(0, 1)) = 0.7
+		_MountainLevel("Mountain Level", Range(0, 1)) = 1
 		_MountainColor("Mountain Color", Color) = (0.5,0.5,0.5,1)
 		_SnowLevel("Snow Level", Range(0, 1)) = 0.2
 		_SnowColor("Snow Color", Color) = (1,1,1,1)
