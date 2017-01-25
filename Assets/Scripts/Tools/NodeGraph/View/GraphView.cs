@@ -1,12 +1,12 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.Profiling;
 
 namespace NodeGraph.Editor {
 
-    public class GraphEditor : EditorWindow {
+
+    public class GraphView : ScriptableObject {
 
         private static Color GridMinorColor {
             get {
@@ -31,84 +31,45 @@ namespace NodeGraph.Editor {
         private static readonly Color GridMinorColorLight = new Color(0f, 0f, 0f, 0.1f);
         private static readonly Color GridMajorColorLight = new Color(0f, 0f, 0f, 0.15f);
 
+        public Graph Graph { get; private set; }
+
         private EditorWindow _Host;
         private Vector2 _Position;
         private float _Scale = 1;
         private Rect _GraphRect;
         private Rect _GraphArea;
-        private Rect _GraphExtents;
         private Rect _LastGraphExtents;
         private Matrix4x4 _MatrixGUI;
 
-        void OnEnable() {
-            var canvasIcon = (Texture)Resources.Load("CanvasIcon");
-            titleContent = new GUIContent("Canvas", canvasIcon);
-            wantsMouseMove = true;
-            minSize = new Vector2(700, 300);
-            Selection.selectionChanged += OnSelectionChanged;
-            Repaint();
-        }
-
-        void OnDisable() {
-            Selection.selectionChanged -= OnSelectionChanged;
-        }
-
-        [MenuItem("Window/NodeGraph")]
-        public static GraphEditor OpenWindow() {
-            return GetWindow<GraphEditor>();
-        }
-
-        void OnSelectionChanged() {
-
-        }
-
-        void OnInspectorUpdate() {
-            Repaint();
-        }
-
-        void OnGUI() {
-
-            if (EditorApplication.isCompiling) {
-                return;
-            }
-
-            BeginGraphGUI(this, new Rect(Vector2.zero, position.size));
-            OnGraphGUI();
-            EndGraphGUI();
+        public static T Instantiate<T>(Graph graph) where T : GraphView {
+            var result = ScriptableObject.CreateInstance<T>();
+            result.Graph = graph;
+            result.hideFlags = HideFlags.HideAndDontSave;
+            return result;
         }
 
         public void BeginGraphGUI(EditorWindow host, Rect position) {
             _Host = host;
             _GraphArea = position;
-            //Debug Area
-            _GraphRect = _GraphArea;
-            _GraphExtents = new Rect(0, 0, _GraphArea.width * 1.5f, _GraphArea.height * 1.5f);
-            //End Debug
+            //Debug
+            Graph.GraphExtents = new Rect(0, 0, _GraphArea.width * 2.5f, _GraphArea.height * 2.5f);
+            //End debug
 
             GUIStyle background = "flow background";
             if (Event.current.type == EventType.Repaint) {
                 background.Draw(position, false, false, false, false);
             }
 
-            _Position = GUI.BeginScrollView(position, _Position, _GraphExtents, GUIStyle.none, GUIStyle.none);
-            //BeginZoomArea(position);
+            _Position = GUI.BeginScrollView(position, _Position, Graph.GraphExtents, GUIStyle.none, GUIStyle.none);
             DrawGrid();
         }
 
         private Rect winRect = new Rect(300, 300, 120, 50);
         public virtual void OnGraphGUI() {
             _Host.BeginWindows();
-            //foreach (Node current in this.m_Graph.nodes) {
-            //    Node n2 = current;
-            //    bool on = this.selection.Contains(current);
-            //    Styles.Color color = (!current.nodeIsInvalid) ? current.color : Styles.Color.Red;
-            /*current.position =*/
-            winRect = GUILayout.Window(110, winRect, _ => {
-                if (GUILayout.Button("Click me a lot, bitch!"))
-                    Debug.Log("Got a click");
-                GUI.DragWindow();
-            }, "Node");
-            //}
+            foreach (Node node in Graph.Nodes) {
+                node.GetView().OnNodeGUI();
+            }
             _Host.EndWindows();
             //this.edgeGUI.DoEdges();
             //this.edgeGUI.DoDraggedEdge();
@@ -118,7 +79,7 @@ namespace NodeGraph.Editor {
         }
 
         public void EndGraphGUI() {
-            //this.UpdateGraphExtents();
+            UpdateGraphExtents();
             DragGraph();
             ScaleGraph();
 
@@ -136,6 +97,10 @@ namespace NodeGraph.Editor {
         void EndZoomArea() {
             GUI.matrix = _MatrixGUI;
             Handles.matrix = _MatrixGUI;
+        }
+
+        private void UpdateGraphExtents() {
+
         }
 
         private void DragGraph() {
@@ -163,13 +128,14 @@ namespace NodeGraph.Editor {
         private void DrawGridLines(float gridSize, Color gridColor) {
             Handles.color = gridColor;
 
-            for (float num = _GraphExtents.xMin - _GraphExtents.xMin % gridSize; num < _GraphExtents.xMax; num += gridSize) {
-                Handles.DrawLine(new Vector2(num, _GraphExtents.yMin), new Vector2(num, _GraphExtents.yMax));
+            for (float num = Graph.GraphExtents.xMin - Graph.GraphExtents.xMin % gridSize; num < Graph.GraphExtents.xMax; num += gridSize) {
+                Handles.DrawLine(new Vector2(num, Graph.GraphExtents.yMin), new Vector2(num, Graph.GraphExtents.yMax));
             }
 
-            for (float num2 = _GraphExtents.yMin - _GraphExtents.yMin % gridSize; num2 < _GraphExtents.yMax; num2 += gridSize) {
-                Handles.DrawLine(new Vector2(_GraphExtents.xMin, num2), new Vector2(_GraphExtents.xMax, num2));
+            for (float num2 = Graph.GraphExtents.yMin - Graph.GraphExtents.yMin % gridSize; num2 < Graph.GraphExtents.yMax; num2 += gridSize) {
+                Handles.DrawLine(new Vector2(Graph.GraphExtents.xMin, num2), new Vector2(Graph.GraphExtents.xMax, num2));
             }
         }
+
     }
 }
