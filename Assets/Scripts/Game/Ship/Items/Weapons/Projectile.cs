@@ -30,7 +30,7 @@ public class Projectile : MonoBehaviour {
     }
 
     public void OnTriggerEnter(Collider other) {
-        if (other.transform.IsChildOf(Damage.Instigator.transform))
+        if (Damage.Instigator != null && other.transform.IsChildOf(Damage.Instigator.transform)) // Ignore the case of self hit
             return;
         var damagable = other.gameObject.GetComponent<IDamagable>();
         if (damagable != null) {

@@ -24,8 +24,10 @@ public class WeaponItem : SlotItem {
     public float Cooldown;
     public float Damage;
 
-    public override bool CheckCompatability(SlotType type) {
-        return type == SlotType.Weapon;
+    public override SlotType Type {
+        get {
+            return SlotType.Weapon;
+        }
     }
 }
 

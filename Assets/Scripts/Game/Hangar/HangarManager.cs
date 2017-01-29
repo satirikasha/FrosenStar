@@ -1,10 +1,16 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Linq;
+using System;
+using Tools;
 
-public class HangarManager : MonoBehaviour {
+public class HangarManager : SingletonBehaviour<HangarManager> {
 
-    void Awake() {
+    public InventoryItem SelectedItem { get; private set; }
+    public event Action<InventoryItem> OnSelectedItemChanged;
+
+    protected override void Awake() {
+        base.Awake();
         //Cursor.lockState = CursorLockMode.Locked;
 
         var shipItem = GameData.Current.PlayerData.ShipData.ShipItem;
@@ -13,6 +19,14 @@ public class HangarManager : MonoBehaviour {
 
     void Update() {
 
+    }
+
+    public void SetSelectedItem(InventoryItem item) {
+        if(SelectedItem != item) {
+            SelectedItem = item;
+            if (OnSelectedItemChanged != null)
+                OnSelectedItemChanged(item);
+        }
     }
 
     public void LeaveHangar() {

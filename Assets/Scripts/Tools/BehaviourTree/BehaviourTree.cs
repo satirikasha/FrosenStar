@@ -19,7 +19,7 @@ namespace Tools.BehaviourTree {
 
 
         public override void Init() {
-            this.hideFlags = HideFlags.None;
+            this.hideFlags = HideFlags.HideAndDontSave;
         }
 
         public override TaskStatus Run() {

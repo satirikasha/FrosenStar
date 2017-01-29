@@ -10,6 +10,8 @@ public class HangarPanelManager : SingletonBehaviour<HangarPanelManager> {
 
     public List<InventoryWidgetConfig> InventoryPanels;
 
+    public HangarPanel LastPanel { get; private set; }
+
     private List<HangarPanel> Panels;
 
     void Start() {
@@ -23,22 +25,35 @@ public class HangarPanelManager : SingletonBehaviour<HangarPanelManager> {
     }
 
     public void MoveToPanel(string name) {
-        var panel = Panels.FirstOrDefault(_ => _.name == name);
-        if (panel != null) {
-            if (panel.Stack == PanelStack.Next) {
-                Panels.First(_ => _.Stack == PanelStack.Current).Stack = PanelStack.Previous;
+        var nextPanel = Panels.FirstOrDefault(_ => _.name == name);
+        var curentPanel = Panels.First(_ => _.Stack == PanelStack.Current);
+
+        if (nextPanel != null) {
+            if (nextPanel.Stack == PanelStack.Next) {
+                curentPanel.Stack = PanelStack.Previous;
             }
-            if(panel.Stack == PanelStack.Previous) {
-                Panels.First(_ => _.Stack == PanelStack.Current).Stack = PanelStack.Next;
+            if (nextPanel.Stack == PanelStack.Previous) {
+                curentPanel.Stack = PanelStack.Next;
             }
-            panel.Stack = PanelStack.Current;
+
+            LastPanel = curentPanel;
+            nextPanel.Stack = PanelStack.Current;
         }
+    }
+
+    public void MoveToLastPanel() {
+        if (LastPanel != null)
+            MoveToPanel(LastPanel.name);
     }
 
     private void InstantiateInventoryPanels() {
         foreach (var config in InventoryPanels) {
-            var go = InventoryWidget.Instantiate(config);
-            go.transform.SetParent(this.transform, false);
+            var inventory = InventoryWidget.Instantiate(config);
+            inventory.transform.SetParent(this.transform, false);
+            if (config.UseSlotFilter) {
+                var slot = SlotListWidget.Instantiate(config);
+                slot.transform.SetParent(this.transform, false);
+            }
         }
     }
 }

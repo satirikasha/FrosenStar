@@ -18,7 +18,11 @@ public abstract class SlotItem : InventoryItem {
     public GameObject ItemPrefab;
     public int EquipedSlotID = -1;
 
-    public abstract bool CheckCompatability(SlotType type);
+    public abstract SlotType Type { get; }
+
+    public virtual bool CheckCompatability(SlotType type) {
+        return type == Type;
+    }
 
     public ItemSlot GetSlot() {
         return PlayerController.LocalPlayer.Ship.ItemSlots.FirstOrDefault(s => s.ID == EquipedSlotID);

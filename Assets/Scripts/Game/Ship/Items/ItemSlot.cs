@@ -39,6 +39,10 @@ public class ItemSlot : MonoBehaviour {
     }
 
     public bool Equip(SlotItem item) {
+        if(ShipPart != null) {
+            ShipPart.Item.EquipedSlotID = -1;
+            Destroy(ShipPart.gameObject);
+        }
         if (item != null && item.CheckCompatability(Type)) {
             item.EquipedSlotID = ID;
             ShipPart = item.Instantiate();

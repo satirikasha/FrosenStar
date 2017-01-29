@@ -21,8 +21,10 @@ public class EngineItem : SlotItem {
     public float EnergyConsumption;
     public float Thrust;
 
-    public override bool CheckCompatability(SlotType type) {
-        return type == SlotType.Engine;
+    public override SlotType Type {
+        get {
+            return SlotType.Engine;
+        }
     }
 }
 

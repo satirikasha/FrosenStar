@@ -16,8 +16,10 @@ public class ContainerItemTemplate : SlotItemTemplate<ContainerItem> {
 public class ContainerItem : SlotItem {
     public float Capacity;
 
-    public override bool CheckCompatability(SlotType type) {
-        return type == SlotType.Container;
+    public override SlotType Type {
+        get {
+            return SlotType.Container;
+        }
     }
 }
 

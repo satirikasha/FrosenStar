@@ -20,6 +20,7 @@ public static class ApplicationManager {
     }
 
     public static void EnterGame() {
+        GameData.Save();
         SceneManager.LoadScene("Game");
     }
 

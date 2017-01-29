@@ -68,7 +68,7 @@ public class Light2D : MonoBehaviour {
             go.transform.SetParent(this.transform);
             var meshRenderer = go.GetComponent<MeshRenderer>();
             var meshFilter = go.GetComponent<MeshFilter>();
-            var material = new Material(Shader.Find("Unlit/LightShaftSampler"));
+            var material = new Material(Shader.Find("Hidden/LightShaftSampler"));
             material.SetTexture("_DepthTex", _RT[i]);
             material.SetColor("_Color", new Color(Color.r, Color.g, Color.b, Intesity));
             material.SetInt("_Depth", Depth);
