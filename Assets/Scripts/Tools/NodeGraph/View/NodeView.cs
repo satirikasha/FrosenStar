@@ -19,12 +19,12 @@ namespace NodeGraph.Editor {
         }
 
         public void OnNodeGUI() {
-            Node.Position = GUILayout.Window(this.GetInstanceID(), Node.Position, NodeWindowGUI, "a window", (GUIStyle)"window");
+            Node.Position = GUILayout.Window(this.GetInstanceID(), Node.Position, NodeWindowGUI, "Завтра дедлайн", (GUIStyle)"window");
         }
 
         public void NodeWindowGUI(int id) {
-            if (GUILayout.Button("Hello World"))
-                Debug.Log("Got a click");
+            if (GUILayout.Button("И так сойдет!"))
+                Debug.Log("И так сойдет");
 
             GUI.DragWindow();
         }
