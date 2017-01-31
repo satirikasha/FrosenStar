@@ -27,7 +27,7 @@ namespace NodeGraph.Editor {
 
         void OnEnable() {
             var canvasIcon = (Texture)Resources.Load("CanvasIcon");
-            titleContent = new GUIContent("Canvas", canvasIcon);
+            titleContent = new GUIContent("Graph", canvasIcon);
             wantsMouseMove = true;
             minSize = new Vector2(700, 300);
             Selection.selectionChanged += OnSelectionChanged;
@@ -72,9 +72,6 @@ namespace NodeGraph.Editor {
         private void DetectGraphFromSelection() {
             if (Selection.activeObject is Graph && EditorUtility.IsPersistent(Selection.activeObject)) {
                 SelectedGraph = (Graph)Selection.activeObject;
-            }
-            else {
-                SelectedGraph = null;
             }
         }
     }

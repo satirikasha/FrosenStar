@@ -48,6 +48,10 @@ namespace NodeGraph.Editor {
             return result;
         }
 
+        void OnEnable() {
+            Debug.Log("Enabled : GraphView");
+        }
+
         public void BeginGraphGUI(EditorWindow host, Rect position) {
             _Host = host;
             _GraphArea = position;
@@ -66,9 +70,15 @@ namespace NodeGraph.Editor {
 
         private Rect winRect = new Rect(300, 300, 120, 50);
         public virtual void OnGraphGUI() {
+           
             _Host.BeginWindows();
             foreach (Node node in Graph.Nodes) {
                 node.GetView().OnNodeGUI();
+            }
+            for (int i = 1; i < Graph.Nodes.Count; i++) {
+                var prePos = Graph.Nodes[i - 1].Position.center;
+                var curPos = Graph.Nodes[i].Position.center;
+                Handles.DrawBezier(prePos, curPos, prePos + Vector2.up * 100, curPos + Vector2.down * 100, Color.gray, null, 3);
             }
             _Host.EndWindows();
             //this.edgeGUI.DoEdges();
@@ -125,7 +135,7 @@ namespace NodeGraph.Editor {
             this.DrawGridLines(120f, GridMajorColor);
         }
 
-        private void DrawGridLines(float gridSize, Color gridColor) {
+        private void DrawGridLines(float gridSize, Color gridColor) { 
             Handles.color = gridColor;
 
             for (float num = Graph.GraphExtents.xMin - Graph.GraphExtents.xMin % gridSize; num < Graph.GraphExtents.xMax; num += gridSize) {

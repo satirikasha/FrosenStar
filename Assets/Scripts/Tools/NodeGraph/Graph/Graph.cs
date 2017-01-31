@@ -14,7 +14,26 @@ namespace NodeGraph {
 
         public Rect GraphExtents;
 
+        public bool Initialized { get; private set; }
+
+        public void Initialize() {
+            if (!Initialized) {
+                Rebuild();
+                Init();
+            }
+        }
+
+        protected virtual void Init() {
+
+        }
+
+        public void Rebuild() {
+
+
+        }
+
 #if UNITY_EDITOR
+        [NonSerialized]
         private Editor.GraphView _View;
         public Editor.GraphView GetView() {
             if (_View == null)
