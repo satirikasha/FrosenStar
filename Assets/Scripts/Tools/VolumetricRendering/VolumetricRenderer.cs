@@ -20,6 +20,9 @@ namespace VolumetricRendering {
             _Mesh.MarkDynamic();
             _MeshFilter = this.GetComponent<MeshFilter>();
             _MeshRenderer = this.GetComponent<MeshRenderer>();
+
+            var a = new RenderVolume();
+            a.RefreshVolume(Volume, this.transform);
         }
 
         void OnWillRenderObject() {
