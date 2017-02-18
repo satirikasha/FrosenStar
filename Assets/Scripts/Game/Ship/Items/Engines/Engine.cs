@@ -10,7 +10,9 @@ public class Engine : ShipPart {
     private ThrusterEffect _ThruserEffect;
 
     void Awake() {
-        _ThruserEffect = Instantiate(VisualEffect.GetEffectResource<ThrusterEffect>(), this.transform, false);
+        _ThruserEffect = VisualEffect.GetEffect<ThrusterEffect>("Thruster");
+        _ThruserEffect.transform.SetParent(this.transform, false);
+        _ThruserEffect.gameObject.SetActive(true);
     }
 
     public void ApplyThrust(Rigidbody rigidbody, float throttle, float deltaTime) {

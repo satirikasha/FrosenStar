@@ -37,7 +37,7 @@ public class Projectile : MonoBehaviour {
             damagable.ApplyDamage(Damage);
         }
 
-        var effect = VisualEffect.GetEffect<ExplosionEffect>();
+        var effect = VisualEffect.GetEffect<ExplosionEffect>("Explosion");
         effect.transform.position = this.transform.position;
         effect.Play();
         Destroy(this.gameObject);

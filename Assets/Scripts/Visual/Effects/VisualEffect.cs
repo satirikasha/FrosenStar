@@ -6,8 +6,9 @@ using UnityEngine;
 
 public abstract class VisualEffect : MonoBehaviour {
 
-    private static Dictionary<Type, List<VisualEffect>> _ResourcesCache = new Dictionary<Type, List<VisualEffect>>();
-    private static Dictionary<Type, List<VisualEffect>> _EffectsCache = new Dictionary<Type, List<VisualEffect>>();
+    private static List<VisualEffect> _ExistingResources;
+    private static Dictionary<string, VisualEffect> _ResourcesCache = new Dictionary<string, VisualEffect>();
+    private static Dictionary<string, List<VisualEffect>> _EffectsCache = new Dictionary<string, List<VisualEffect>>();
 
     public static Transform EffectsHost {
         get {
@@ -18,16 +19,15 @@ public abstract class VisualEffect : MonoBehaviour {
     }
     private static Transform _EffectsHost;
 
-    protected virtual void Awake() {
-        var type = this.GetType();
-        if (!_EffectsCache.ContainsKey(type)) {
-            _EffectsCache.Add(type, new List<VisualEffect>());
+    private void Register() {
+        if (!_EffectsCache.ContainsKey(this.name)) {
+            _EffectsCache.Add(this.name, new List<VisualEffect>());
         }
-        _EffectsCache[type].Add(this);
+        _EffectsCache[this.name].Add(this);
     }
 
     protected virtual void OnDestroy() {
-        _EffectsCache[this.GetType()].Remove(this);
+        _EffectsCache[this.name].Remove(this);
     }
 
     public virtual void Play() {
@@ -39,27 +39,31 @@ public abstract class VisualEffect : MonoBehaviour {
         yield return null;
     }
 
-    public static T GetEffect<T>(string name = null) where T : VisualEffect {
+    public static T GetEffect<T>(string name) where T : VisualEffect {
         T result = null;
-        if (_EffectsCache.ContainsKey(typeof(T))) {
-            result = (T)_EffectsCache[typeof(T)].FirstOrDefault(_ => !_.gameObject.activeSelf && (string.IsNullOrEmpty(name) || name == _.name));
+        if (_EffectsCache.ContainsKey(name)) {
+            result = _EffectsCache[name].FirstOrDefault(_ => !_.gameObject.activeSelf) as T;
         }
         if (result == null) {
             result = Instantiate(GetEffectResource<T>(name), EffectsHost, false);
+            result.name = name;
             result.gameObject.SetActive(false);
+            result.Register();
         }
         return result;
     }
 
-    public static T GetEffectResource<T>(string name = null) where T : VisualEffect {
-        if (!_ResourcesCache.ContainsKey(typeof(T))) {
-            _ResourcesCache.Add(typeof(T), Resources.LoadAll<T>("Prefabs/Effects").Cast<VisualEffect>().ToList());
+    private static VisualEffect GetEffectResource(string name){
+        if(_ExistingResources == null) {
+            _ExistingResources = Resources.LoadAll<VisualEffect>("Prefabs/Effects").ToList();
         }
-        if (string.IsNullOrEmpty(name)) {
-            return (T)_ResourcesCache[typeof(T)].FirstOrDefault();
+        if (!_ResourcesCache.ContainsKey(name)) {
+            _ResourcesCache.Add(name, _ExistingResources.FirstOrDefault(_ => _.name == name));
         }
-        else {
-            return (T)_ResourcesCache[typeof(T)].FirstOrDefault(_ => _.name == name);
-        }
+        return _ResourcesCache[name];
+    }
+
+    private static T GetEffectResource<T>(string name) where T : VisualEffect {
+        return GetEffectResource(name) as T;
     }
 }

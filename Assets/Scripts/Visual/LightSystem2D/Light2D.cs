@@ -80,7 +80,7 @@ public class Light2D : MonoBehaviour {
 
     private void GenerateRT() {
         for (int i = 0; i < 4; i++) {
-            _RT[i] = RenderTexture.GetTemporary(Resolution, Depth, 32);
+            _RT[i] = RenderTexture.GetTemporary(Resolution, Depth, 24);
         }
     }
 

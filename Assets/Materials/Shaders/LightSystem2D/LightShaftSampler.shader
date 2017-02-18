@@ -48,16 +48,15 @@
 			fixed4 frag (v2f i) : SV_Target
 			{
                 float dist = distance (0, i.localPos);
-                int blur = 2;
-                float falloff = (1 - dist) * (1 - dist);
+                int blur = _DepthTex_TexelSize.z / 512;
+                float falloff = 1 - dist;
 				float shadowCoeff = 0.25;
 				float lightMask = 0;
 				for (int c = 0; c < _Depth; c++) {
-                    //[loop]
                     for (int b = -blur; b <= blur; b++) {
-					    fixed4 depthTex = tex2D(_DepthTex, float2(((i.localPos.x + b * _DepthTex_TexelSize.x) / i.localPos.z + 1) / 2, _DepthTex_TexelSize.y * c));
-					    float depth = (depthTex.r + depthTex.g + depthTex.b) / 3;
-					    lightMask += lerp(falloff * shadowCoeff, falloff, (1 - i.localPos.z) > depth - 0.005);
+					    fixed4 depthTex = tex2D(_DepthTex, float2(((i.localPos.x + b * _DepthTex_TexelSize.x / blur) / i.localPos.z + 1) / 2, _DepthTex_TexelSize.y * c));
+					    float depth = (depthTex.r + depthTex.g + depthTex.b + depthTex.a) / 4;
+					    lightMask += lerp(falloff * shadowCoeff, falloff, (1 - i.localPos.z) > depth - 0.001);
                     }
 				} 
 				lightMask /= _Depth * (blur * 2 + 1);

@@ -10,8 +10,7 @@ public class ThrusterEffect : VisualEffect {
     private Light _Light;
     private float _MaxLightIntensity;
 
-    protected override void Awake() {
-        base.Awake();
+    void Awake() {
         _Thruster = this.GetComponent<ParticleSystem>();
         _Light = this.GetComponent<Light>();
         _MaxLightIntensity = _Light.intensity;
@@ -19,8 +18,9 @@ public class ThrusterEffect : VisualEffect {
 
     void FixedUpdate() {
         _Light.intensity = _MaxLightIntensity * Intensity;
+        _Light.enabled = Intensity > 0;
         _Thruster.startColor = new Color(1, 1, 1, Intensity);
-        //_Thruster.enableEmission = Intensity > 0;
+        _Thruster.enableEmission = Intensity > 0;
         _Thruster.Simulate(Time.fixedDeltaTime, true, false);
     }
 }
